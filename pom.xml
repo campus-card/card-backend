@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.3</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+  <groupId>org.wlow.card</groupId>
+  <artifactId>parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>parent</name>
+  <description>
+    父工程, 包含公共依赖项, 限定子工程依赖版本以及聚合子工程
+  </description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>card-application</module>
+    <module>card-auth</module>
+  </modules>
+
+  <properties>
+    <java.version>21</java.version>
+    <!-- SpringBoot父工程里面没有版本限制的依赖在这里限制一下 -->
+    <jjwt.version>0.12.6</jjwt.version>
+  </properties>
+
+  <dependencies>
+    <!-- lombok应该所有子工程都会用到吧... -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>annotationProcessor</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- 限定子工程依赖版本 -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+          <groupId>io.jsonwebtoken</groupId>
+          <artifactId>jjwt</artifactId>
+          <version>${jjwt.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

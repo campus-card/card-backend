@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: card-application
+server:
+  servlet:
+    context-path: /api
