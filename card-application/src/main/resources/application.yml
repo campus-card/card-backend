@@ -20,6 +20,8 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: 500ms
+# Redis键名的前缀
+redis-prefix: 'CampusCard:'
 server:
   port: 8192
   servlet:
@@ -30,8 +32,8 @@ server:
       force: true
 # mybatis-plus
 mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       id-type: auto
@@ -49,6 +51,6 @@ jwt:
     refresh-bound: 43200 # 12小时
 
 # Spring事务管理日志
-logging:
-  level:
-    org.springframework.jdbc.support.JdbcTransactionManager: debug
+#logging:
+#  level:
+#    org.springframework.jdbc.support.JdbcTransactionManager: debug

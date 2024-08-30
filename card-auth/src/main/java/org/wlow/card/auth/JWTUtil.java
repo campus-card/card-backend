@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.wlow.card.data.data.constant.UserRole;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -16,14 +17,14 @@ import java.util.Map;
 public class JWTUtil {
     /* expiration下的时间单位都为秒 */
     @Value("${jwt.expiration.access-token}")
-    private long EXPIRATION;
+    public long EXPIRATION;
     @Value("${jwt.expiration.refresh-token}")
-    private long REFRESH_EXPIRATION;
+    public long REFRESH_EXPIRATION;
     /**
      * 刷新token的有效期上限.
      */
     @Value("${jwt.expiration.refresh-bound}")
-    private long REFRESH_BOUND;
+    public long REFRESH_BOUND;
 
     private final SecretKey KEY;
     private final SecretKey REFRESH_KEY;
@@ -52,14 +53,16 @@ public class JWTUtil {
     }
 
     /**
-     * 获取不同类型的token
+     * 获取不同类型的token <br>
+     * 枚举都设置为name
      */
-    public String getToken(Integer userId, String username, TokenType type) {
+    public String getToken(Integer userId, String username, UserRole role, TokenType type) {
         Map<String, Object> payload = new HashMap<>();
         payload.put("userId", userId);
         payload.put("username", username);
+        payload.put("role", role.name());
         // token类型也放进payload里. 等于枚举类的name("ACCESS", "REFRESH")
-        payload.put("type", type.name());
+        payload.put("type", type);
         if (type == TokenType.ACCESS) {
             return genToken(payload, EXPIRATION, KEY);
         } else {

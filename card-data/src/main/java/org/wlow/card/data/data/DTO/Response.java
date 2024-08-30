@@ -1,4 +1,4 @@
-package org.wlow.card.data.data.VO;
+package org.wlow.card.data.data.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +18,9 @@ public class Response {
 
     public static Response success(String message, Object data) {
         return new Response(200, message, data);
+    }
+    public static Response success(Object data) {
+        return new Response(200, "ok", data);
     }
 
     public static Response failure(int code, String message) {

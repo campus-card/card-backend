@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.wlow.card.data.data.VO.Response;
+import org.wlow.card.data.data.DTO.Response;
 import org.wlow.card.data.data.constant.UserRole;
 
 @RestController
@@ -29,7 +29,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login() {
-        return "login";
+    public Response login(@RequestParam String username,
+                          @RequestParam String password,
+                          @RequestParam UserRole role) {
+        return authService.login(username, password, role);
+    }
+
+    @PostMapping("refresh")
+    public Response refresh(@RequestParam String refreshToken) {
+        return authService.refresh(refreshToken);
     }
 }
