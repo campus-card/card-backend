@@ -1,6 +1,54 @@
 spring:
   application:
     name: card-application
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/campus_card?useUnicode=true&characterEncoding=utf-8&useSSL=true&jdbcCompliantTruncation=false
+    username: root
+    password: 123456
+  data:
+    redis:
+      host: 192.168.138.128
+      port: 6379
+      database: 1
+      username: default
+      password: 123456
+      timeout: 1s
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 500ms
 server:
+  port: 8192
   servlet:
     context-path: /api
+    # 设置响应编码格式强制为UTF-8, 否则过滤器中通过打印流直接响应中文时前端会收到乱码
+    encoding:
+      charset: UTF-8
+      force: true
+# mybatis-plus
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+# JWT
+jwt:
+  secret-key:
+    # jjwt的秘钥不允许太短
+    access-token: 3q4-jb!@-$%@(%vgUYT&:s-dbehj@AWDnwadamf
+    refresh-token: enKJ.WFH@((*#QRFFF_+;efg:.fa@aawff;'qss
+  expiration:
+    # 单位为秒
+    access-token: 432000 # 5天
+    refresh-token: 2592000 # 30天
+    refresh-bound: 43200 # 12小时
+
+# Spring事务管理日志
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
