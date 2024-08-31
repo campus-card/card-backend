@@ -20,8 +20,10 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: 500ms
+
 # Redis键名的前缀
 redis-prefix: 'CampusCard:'
+
 server:
   port: 8192
   servlet:
@@ -30,6 +32,7 @@ server:
     encoding:
       charset: UTF-8
       force: true
+
 # mybatis-plus
 mybatis-plus:
 #  configuration:

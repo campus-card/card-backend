@@ -58,7 +58,7 @@ public class JWTUtil {
      */
     public String getToken(Integer userId, String username, UserRole role, TokenType type) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("userId", userId);
+        payload.put("id", userId);
         payload.put("username", username);
         payload.put("role", role.name());
         // token类型也放进payload里. 等于枚举类的name("ACCESS", "REFRESH")

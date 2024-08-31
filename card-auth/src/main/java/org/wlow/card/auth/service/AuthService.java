@@ -1,4 +1,4 @@
-package org.wlow.card.auth;
+package org.wlow.card.auth.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.jsonwebtoken.Claims;
@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.wlow.card.auth.JWTUtil;
+import org.wlow.card.auth.TokenType;
 import org.wlow.card.data.data.PO.User;
 import org.wlow.card.data.data.DTO.Response;
 import org.wlow.card.data.data.constant.UserRole;
@@ -68,7 +70,7 @@ public class AuthService {
         // RefreshToken:role:userId
         redisUtil.set("RefreshToken:" + user.getRole() + ":" + user.getId(), refreshToken, jwtUtil.REFRESH_EXPIRATION);
 
-        return Response.success(Map.of("userId", user.getId(), "username", user.getUsername(), "accessToken", accessToken, "refreshToken", refreshToken));
+        return Response.success(Map.of("id", user.getId(), "username", user.getUsername(), "role", role.value, "accessToken", accessToken, "refreshToken", refreshToken));
     }
 
     /**
@@ -85,7 +87,7 @@ public class AuthService {
             log.error("refreshToken已过期: {}", e.getMessage());
             return Response.error("refreshToken已过期");
         }
-        Integer userId = payload.get("userId", Integer.class);
+        Integer userId = payload.get("id", Integer.class);
         String username = payload.get("username", String.class);
         String role = payload.get("role", String.class);
 

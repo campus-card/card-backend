@@ -2,6 +2,7 @@ package org.wlow.card.application.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,5 +46,11 @@ public class GlobalHandler {
     public Response handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         log.error("参数校验未通过: {}", Arrays.toString(e.getDetailMessageArguments()));
         return Response.failure(400, "参数校验未通过: " + Arrays.toString(e.getDetailMessageArguments()));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+        log.error("不支持的请求方法: {}", e.getMethod());
+        return Response.failure(405, "不支持的请求方法: " + e.getMethod());
     }
 }
