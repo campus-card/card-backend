@@ -11,7 +11,7 @@
 
   <artifactId>card-data</artifactId>
   <description>
-    持久层模块, 包含MySQL和Redis的API以及相关PO/DTO等
+    持久化模块, 包含MySQL和Redis的API以及相关PO/DTO等
   </description>
 
   <properties>

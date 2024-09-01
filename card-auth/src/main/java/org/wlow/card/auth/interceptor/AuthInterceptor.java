@@ -1,4 +1,4 @@
-package org.wlow.card.auth;
+package org.wlow.card.auth.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.wlow.card.data.data.constant.CurrentUser;
+import org.wlow.card.auth.JWTUtil;
+import org.wlow.card.auth.TokenType;
 import org.wlow.card.data.data.DTO.Response;
 import org.wlow.card.data.data.constant.UserRole;
 

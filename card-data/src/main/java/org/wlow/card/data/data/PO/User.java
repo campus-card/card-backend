@@ -8,6 +8,9 @@ import org.wlow.card.data.data.constant.UserRole;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

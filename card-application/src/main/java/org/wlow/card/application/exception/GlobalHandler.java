@@ -1,6 +1,7 @@
 package org.wlow.card.application.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -43,14 +44,30 @@ public class GlobalHandler {
      * 如果是DTO类接收参数校验不通过, 抛出的是MethodArgumentNotValidException异常
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, HandlerMethodValidationException.class})
-    public Response handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
-        log.error("参数校验未通过: {}", Arrays.toString(e.getDetailMessageArguments()));
-        return Response.failure(400, "参数校验未通过: " + Arrays.toString(e.getDetailMessageArguments()));
+    public Response handleMethodArgumentNotValidException(Exception e){
+        // log.error("参数校验未通过: {}", Arrays.toString(e.getDetailMessageArguments()));
+        // return Response.failure(400, "参数校验未通过: " + Arrays.toString(e.getDetailMessageArguments()));
+        String message;
+        if (e instanceof MethodArgumentNotValidException e1) {
+            message = Arrays.toString(e1.getDetailMessageArguments());
+        } else if (e instanceof HandlerMethodValidationException e2) {
+            message = Arrays.toString(e2.getDetailMessageArguments());
+        } else {
+            message = e.getMessage();
+        }
+        log.error("参数校验未通过: {}", message);
+        return Response.failure(400, "参数校验未通过: " + message);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
         log.error("不支持的请求方法: {}", e.getMethod());
         return Response.failure(405, "不支持的请求方法: " + e.getMethod());
+    }
+
+    @ExceptionHandler(MyBatisSystemException.class)
+    public Response handleMyBatisSystemException(MyBatisSystemException e){
+        log.error("数据库异常: {}", e.getMessage());
+        return Response.failure(500, "数据库异常: " + e.getMessage());
     }
 }

@@ -21,6 +21,7 @@
     <module>card-application</module>
     <module>card-auth</module>
     <module>card-data</module>
+    <module>card-shop</module>
   </modules>
 
   <properties>
@@ -32,6 +33,7 @@
     <card-application.version>0.0.1-SNAPSHOT</card-application.version>
     <card-auth.version>0.0.1-SNAPSHOT</card-auth.version>
     <card-data.version>0.0.1-SNAPSHOT</card-data.version>
+    <card-shop.version>0.0.1-SNAPSHOT</card-shop.version>
   </properties>
 
   <dependencies>
@@ -46,7 +48,7 @@
   <!-- 限定子工程依赖版本 -->
   <dependencyManagement>
     <dependencies>
-      <!-- ======本项目模块 -->
+      <!-- ======本项目模块>>>> -->
       <dependency>
           <groupId>org.wlow.card</groupId>
           <artifactId>card-application</artifactId>
@@ -62,7 +64,12 @@
           <artifactId>card-data</artifactId>
           <version>${card-data.version}</version>
       </dependency>
-      <!-- ======本项目模块 -->
+      <dependency>
+          <groupId>org.wlow.card</groupId>
+          <artifactId>card-shop</artifactId>
+          <version>${card-shop.version}</version>
+      </dependency>
+      <!-- ======本项目模块<<<< -->
       <dependency>
           <groupId>io.jsonwebtoken</groupId>
           <artifactId>jjwt</artifactId>

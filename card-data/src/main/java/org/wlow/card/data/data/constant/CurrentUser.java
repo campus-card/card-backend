@@ -1,6 +1,4 @@
-package org.wlow.card.auth;
-
-import org.wlow.card.data.data.constant.UserRole;
+package org.wlow.card.data.data.constant;
 
 /**
  * 当前用户信息
