@@ -48,8 +48,6 @@ public class ShopController {
     @PatchMapping("/modifyProduct")
     public Response modifyProduct(@RequestParam Integer id,
                                   @RequestParam(required = false)
-                                      @Nullable
-                                      @NotBlank(message = "商品名称不能为空")
                                       String name,
                                   @RequestParam(required = false)
                                       @Nullable

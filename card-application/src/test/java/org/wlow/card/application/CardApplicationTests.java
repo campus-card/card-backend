@@ -31,7 +31,12 @@ class CardApplicationTests {
 
     @Test
     void enumTest() {
-        log.info("role: {}", UserRole.Admin);
+        User user = User.builder()
+                .id(7)
+                .username("Shop")
+                .build();
+        log.info("user: {}", user);
+        userMapper.updateById(user);
     }
 
     @Test

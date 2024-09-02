@@ -41,9 +41,10 @@ public class AuthService {
         QueryWrapper<User> query = new QueryWrapper<>();
         query.eq("username", username);
         query.eq("role", role);
-        if (userMapper.selectCount(query) > 0) {
+        if (userMapper.exists(query)) {
             return Response.error("用户名已被占用");
         }
+
         User user = User.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))

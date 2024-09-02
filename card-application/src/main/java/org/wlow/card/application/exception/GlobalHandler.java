@@ -45,8 +45,6 @@ public class GlobalHandler {
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, HandlerMethodValidationException.class})
     public Response handleMethodArgumentNotValidException(Exception e){
-        // log.error("参数校验未通过: {}", Arrays.toString(e.getDetailMessageArguments()));
-        // return Response.failure(400, "参数校验未通过: " + Arrays.toString(e.getDetailMessageArguments()));
         String message;
         if (e instanceof MethodArgumentNotValidException e1) {
             message = Arrays.toString(e1.getDetailMessageArguments());
@@ -69,5 +67,11 @@ public class GlobalHandler {
     public Response handleMyBatisSystemException(MyBatisSystemException e){
         log.error("数据库异常: {}", e.getMessage());
         return Response.failure(500, "数据库异常: " + e.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Response handleException(Exception e){
+        log.error("未处理的异常: {}", e.getMessage());
+        return Response.failure(500, "未处理的异常: " + e.getMessage());
     }
 }

@@ -1,9 +1,8 @@
 package org.wlow.card.auth.controller;
 
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.bind.annotation.*;
 import org.wlow.card.auth.service.UserService;
 import org.wlow.card.data.data.DTO.Response;
 
@@ -18,5 +17,16 @@ public class UserController {
     @GetMapping("/getUserInfo")
     public Response getUserInfo() {
         return userService.getUserInfo();
+    }
+
+    /**
+     * 更新用户个人信息, 目前能改用户名.
+     */
+    @PatchMapping("/updateUserInfo")
+    public Response updateUserInfo(@RequestParam
+                                       @Length(min = 4, message = "用户名长度不得小于4")
+                                       @Length(max = 30, message = "用户名长度不得大于30")
+                                       String username) {
+        return userService.updateUserInfo(username);
     }
 }

@@ -34,6 +34,10 @@ public class Product {
      */
     private Integer store;
     /**
+     * 商品销量
+     */
+    private Integer sales;
+    /**
      * 商品上架时间
      */
     private LocalDateTime uploadTime;

@@ -1,8 +1,7 @@
 package org.wlow.card.auth.controller;
 
 import jakarta.annotation.Resource;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,11 +21,11 @@ public class AuthController {
      */
     @PostMapping("/signUp")
     public Response signUp(@RequestParam
-                               @Min(value = 4, message = "用户名长度不得小于4")
-                               @Max(value = 30, message = "用户名长度不得大于30")
+                               @Length(min = 4, message = "用户名长度不得小于4")
+                               @Length(max = 30, message = "用户名长度不得大于30")
                                String username,
                            @RequestParam
-                               @Min(value = 6, message = "密码长度不得小于6")
+                               @Length(min = 6, message = "密码长度不得小于6")
                                String password,
                            @RequestParam UserRole role) {
         return authService.signUp(username, password, role);

@@ -65,7 +65,12 @@ public class ShopService {
 
         UpdateWrapper<Product> update = new UpdateWrapper<>();
         update.eq("id", id);
-        update.set(name != null, "name", name);
+        if (name != null) {
+            if (name.isBlank()) {
+                return Response.failure(400, "商品名称不能为空");
+            }
+            update.set("name", name);
+        }
         update.set(description != null, "description", description);
         update.set(price != null, "price", price);
         update.set(store != null, "store", store);
