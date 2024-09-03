@@ -32,7 +32,15 @@ public class PermissionInterceptor implements HandlerInterceptor {
         if (uri.startsWith("/api/shop")) {
             if (!(role == UserRole.Shop || role == UserRole.Admin)) {
                 log.error("无权限");
-                response.getWriter().write(objectMapper.writeValueAsString(Response.failure(403, "无权限")));
+                response.getWriter().write(objectMapper.writeValueAsString(Response.forbidden()));
+                return false;
+            }
+        }
+        // /student下的接口只允许学生和管理员访问
+        if (uri.startsWith("/api/student")) {
+            if (!(role == UserRole.Student || role == UserRole.Admin)) {
+                log.error("无权限");
+                response.getWriter().write(objectMapper.writeValueAsString(Response.forbidden()));
                 return false;
             }
         }

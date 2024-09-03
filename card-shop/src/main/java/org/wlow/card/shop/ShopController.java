@@ -1,12 +1,13 @@
-package org.wlow.card.shop.controller;
+package org.wlow.card.shop;
 
 import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
-import org.wlow.card.shop.service.ShopService;
 import org.wlow.card.data.data.DTO.Response;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/shop")
@@ -27,7 +28,7 @@ public class ShopController {
                                @RequestParam
                                    @PositiveOrZero(message = "商品价格不能为负数")
                                    @Digits(fraction = 2, integer = 10, message = "商品价格最多有两位小数, 整数部分最多10位")
-                                   Double price,
+                                   BigDecimal price,
                                @RequestParam
                                    @PositiveOrZero(message = "商品库存不能为负数")
                                    Integer store) {
@@ -57,7 +58,7 @@ public class ShopController {
                                       @Nullable
                                       @PositiveOrZero(message = "商品价格不能为负数")
                                       @Digits(fraction = 2, integer = 10, message = "商品价格最多有两位小数, 整数部分最多10位")
-                                      Double price,
+                                      BigDecimal price,
                                   @RequestParam(required = false)
                                       @Nullable
                                       @PositiveOrZero(message = "商品库存不能为负数")
@@ -71,10 +72,10 @@ public class ShopController {
      */
     @GetMapping("/getProductList")
     public Response getProductList(@RequestParam
-                                       @Min(value = 1, message = "页码不能小于1")
+                                       @Positive(message = "页码必须为正数")
                                        Integer page,
                                    @RequestParam
-                                       @Min(value = 1, message = "每页数量不能小于1")
+                                       @Positive(message = "每页数量必须为正数")
                                        @Max(value = 100, message = "每页数量不能大于100")
                                        Integer pageSize,
                                    @RequestParam(defaultValue = "false")
@@ -82,5 +83,19 @@ public class ShopController {
                                    @RequestParam(defaultValue = "1")
                                        Integer order) {
         return shopService.getProductList(page, pageSize, order, isAsc);
+    }
+
+    /**
+     * 商家查询商品销售记录
+     */
+    @GetMapping("/getSalesRecord")
+    public Response getSalesRecord(@RequestParam
+                                       @Positive(message = "页码必须为正数")
+                                       Integer page,
+                                   @RequestParam
+                                       @Positive(message = "每页数量必须为正数")
+                                       @Max(value = 100, message = "每页数量不能大于100")
+                                       Integer pageSize) {
+        return shopService.getSalesRecord(page, pageSize);
     }
 }

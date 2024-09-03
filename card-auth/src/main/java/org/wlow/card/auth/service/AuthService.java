@@ -42,7 +42,7 @@ public class AuthService {
         query.eq("username", username);
         query.eq("role", role);
         if (userMapper.exists(query)) {
-            return Response.error("用户名已被占用");
+            return Response.failure(400, "用户名已被占用");
         }
 
         User user = User.builder()
@@ -63,7 +63,7 @@ public class AuthService {
         query.eq("role", role);
         User user = userMapper.selectOne(query);
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
-            return Response.error("用户名或密码错误");
+            return Response.failure(400, "用户名或密码错误");
         }
         // 生成token, refreshToken存到redis并设置过期时间
         String accessToken = jwtUtil.getToken(user.getId(), user.getUsername(), user.getRole(), TokenType.ACCESS);
@@ -83,10 +83,10 @@ public class AuthService {
             payload = jwtUtil.parseToken(refreshToken, TokenType.REFRESH);
         } catch (SignatureException e) {
             log.error("refreshToken解析失败: {}", e.getMessage());
-            return Response.error("无效的refreshToken");
+            return Response.failure(400, "无效的refreshToken");
         } catch (ExpiredJwtException e) {
             log.error("refreshToken已过期: {}", e.getMessage());
-            return Response.error("refreshToken已过期");
+            return Response.failure(400, "refreshToken已过期");
         }
         Integer userId = payload.get("id", Integer.class);
         String username = payload.get("username", String.class);
@@ -95,7 +95,7 @@ public class AuthService {
         String refreshTokenCached = redisUtil.get("RefreshToken:" + role + ":" + userId);
         if (!refreshToken.equals(refreshTokenCached)) {
             // refreshToken不匹配
-            return Response.error("无效的refreshToken");
+            return Response.forbidden("无效的refreshToken");
         }
         // 新的accessToken
         String accessToken = jwtUtil.getToken(userId, username, UserRole.valueOf(role), TokenType.ACCESS);

@@ -19,6 +19,7 @@ public class Response {
     public static Response success(String message, Object data) {
         return new Response(200, message, data);
     }
+
     public static Response success(Object data) {
         return new Response(200, "ok", data);
     }
@@ -29,5 +30,13 @@ public class Response {
 
     public static Response error(String message) {
         return new Response(500, message, null);
+    }
+
+    public static Response forbidden(String message) {
+        return new Response(403, message, null);
+    }
+
+    public static Response forbidden() {
+        return new Response(403, "无权限", null);
     }
 }

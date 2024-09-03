@@ -22,7 +22,7 @@ public class UserService {
         // todo: 使用redis缓存用户信息
         User user = userMapper.selectById(CurrentUser.getId());
         if (user == null) {
-            return Response.error("用户不存在");
+            return Response.failure(400, "用户不存在");
         }
         return Response.success(DTOUser.fromPO(user));
     }
@@ -34,7 +34,7 @@ public class UserService {
         query.eq("username", username);
         query.eq("role", role);
         if (userMapper.exists(query)) {
-            return Response.error("用户名已被占用");
+            return Response.failure(400, "用户名已被占用");
         }
         User user = User.builder()
                 .id(userId)

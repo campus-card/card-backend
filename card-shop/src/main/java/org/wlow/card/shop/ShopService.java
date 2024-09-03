@@ -1,28 +1,31 @@
-package org.wlow.card.shop.service;
+package org.wlow.card.shop;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Service;
 import org.wlow.card.data.data.DTO.DTOPage;
 import org.wlow.card.data.data.DTO.Response;
 import org.wlow.card.data.data.PO.Product;
+import org.wlow.card.data.data.PO.PurchaseRecord;
 import org.wlow.card.data.data.constant.CurrentUser;
 import org.wlow.card.data.mapper.ProductMapper;
+import org.wlow.card.data.mapper.PurchaseRecordMapper;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
 public class ShopService {
     @Resource
     private ProductMapper productMapper;
+    @Resource
+    private PurchaseRecordMapper purchaseRecordMapper;
 
-    public Response addProduct(String name, String description, Double price, Integer store) {
+    public Response addProduct(String name, String description, BigDecimal price, Integer store) {
         Product product = Product.builder()
                 .name(name)
                 .shopId(CurrentUser.getId())
@@ -54,7 +57,7 @@ public class ShopService {
         }
     }
 
-    public Response modifyProduct(Integer id, String name, String description, Double price, Integer store) {
+    public Response modifyProduct(Integer id, String name, String description, BigDecimal price, Integer store) {
         Product target = productMapper.selectById(id);
         if (target == null) {
             return Response.failure(404, "商品不存在");
@@ -98,6 +101,17 @@ public class ShopService {
                 productPage.getTotal(),
                 productPage.getPages(),
                 productPage.getRecords()
+        ));
+    }
+
+    public Response getSalesRecord(Integer page, Integer pageSize) {
+        int shopId = CurrentUser.getId();
+        IPage<PurchaseRecord> recordPage = Page.of(page, pageSize);
+        recordPage = purchaseRecordMapper.selectByShopId(shopId, recordPage);
+        return Response.success(new DTOPage<>(
+                recordPage.getTotal(),
+                recordPage.getPages(),
+                recordPage.getRecords()
         ));
     }
 }

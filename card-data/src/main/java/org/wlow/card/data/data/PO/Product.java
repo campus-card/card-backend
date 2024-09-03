@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -28,7 +29,7 @@ public class Product {
      * 商品描述
      */
     private String description;
-    private Double price;
+    private BigDecimal price;
     /**
      * 商品库存
      */

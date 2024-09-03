@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.wlow.card.data.data.DTO.Response;
 
 import java.util.Arrays;
 
+/**
+ * 全局异常处理器. 处理一些常见的异常
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalHandler {
@@ -69,9 +73,17 @@ public class GlobalHandler {
         return Response.failure(500, "数据库异常: " + e.getMessage());
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public Response handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+        String parameterName = e.getName();
+        String parameterType = e.getParameter().getParameterType().getName();
+        log.error("参数类型不匹配: 参数 {} 应当为 {} 类型", parameterName, parameterType);
+        return Response.failure(400, "参数类型不匹配: 参数 " + parameterName + " 应当为 " + parameterType + " 类型");
+    }
+
     @ExceptionHandler(Exception.class)
     public Response handleException(Exception e){
-        log.error("未处理的异常: {}", e.getMessage());
-        return Response.failure(500, "未处理的异常: " + e.getMessage());
+        log.error("服务端异常: {} >> {}", e.getClass(), e.getMessage());
+        return Response.error("服务端异常: " + e.getMessage());
     }
 }

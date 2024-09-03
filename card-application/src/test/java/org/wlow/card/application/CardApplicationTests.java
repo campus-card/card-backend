@@ -1,5 +1,6 @@
 package org.wlow.card.application;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -7,9 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.wlow.card.auth.TokenType;
 import org.wlow.card.auth.JWTUtil;
+import org.wlow.card.data.data.PO.Card;
 import org.wlow.card.data.data.PO.User;
 import org.wlow.card.data.data.constant.UserRole;
+import org.wlow.card.data.mapper.CardMapper;
+import org.wlow.card.data.mapper.ProductMapper;
 import org.wlow.card.data.mapper.UserMapper;
+
+import java.math.BigDecimal;
 
 @Slf4j
 @SpringBootTest
@@ -18,6 +24,10 @@ class CardApplicationTests {
     private JWTUtil jwtUtil;
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private CardMapper cardMapper;
+    @Resource
+    private ProductMapper productMapper;
 
     @Test
     void token() {
@@ -41,8 +51,14 @@ class CardApplicationTests {
 
     @Test
     void mapper() {
-        log.info("userMapper: {}", userMapper);
-        User user = User.builder().username("reisen").password("123456").role(UserRole.Admin).build();
-        userMapper.insert(user);
+
+    }
+
+    @Test
+    void update() {
+        UpdateWrapper<Card> update = new UpdateWrapper<>();
+        update.eq("user_id", 0);
+        BigDecimal amount = BigDecimal.valueOf(123.45);
+        cardMapper.recharge(amount, update);
     }
 }

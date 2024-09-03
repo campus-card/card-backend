@@ -22,6 +22,7 @@
     <module>card-auth</module>
     <module>card-data</module>
     <module>card-shop</module>
+    <module>card-student</module>
   </modules>
 
   <properties>
@@ -34,6 +35,7 @@
     <card-auth.version>0.0.1-SNAPSHOT</card-auth.version>
     <card-data.version>0.0.1-SNAPSHOT</card-data.version>
     <card-shop.version>0.0.1-SNAPSHOT</card-shop.version>
+    <card-student.version>0.0.1-SNAPSHOT</card-student.version>
   </properties>
 
   <dependencies>
@@ -68,6 +70,11 @@
           <groupId>org.wlow.card</groupId>
           <artifactId>card-shop</artifactId>
           <version>${card-shop.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.wlow.card</groupId>
+          <artifactId>card-student</artifactId>
+          <version>${card-student.version}</version>
       </dependency>
       <!-- ======本项目模块<<<< -->
       <dependency>
