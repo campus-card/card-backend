@@ -115,6 +115,7 @@ public class StudentService {
         PurchaseRecord record = PurchaseRecord.builder()
                 .studentId(studentId)
                 .productId(productId)
+                .shopId(product.getShopId())
                 .count(count)
                 .purchaseTime(LocalDateTime.now())
                 .amount(amount)

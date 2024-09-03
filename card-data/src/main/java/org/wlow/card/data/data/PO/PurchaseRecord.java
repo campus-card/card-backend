@@ -22,9 +22,13 @@ public class PurchaseRecord {
      */
     private Integer studentId;
     /**
-     * 购买的商品的id. 可以查到对应的商户id
+     * 购买的商品的id
      */
     private Integer productId;
+    /**
+     * 购买的商品所在商户的id
+     */
+    private Integer shopId;
     /**
      * 购买的商品的数量
      */

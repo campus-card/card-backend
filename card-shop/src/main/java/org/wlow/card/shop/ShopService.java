@@ -106,8 +106,11 @@ public class ShopService {
 
     public Response getSalesRecord(Integer page, Integer pageSize) {
         int shopId = CurrentUser.getId();
-        IPage<PurchaseRecord> recordPage = Page.of(page, pageSize);
-        recordPage = purchaseRecordMapper.selectByShopId(shopId, recordPage);
+        Page<PurchaseRecord> recordPage = Page.of(page, pageSize);
+        QueryWrapper<PurchaseRecord> query = new QueryWrapper<>();
+        query.eq("shop_id", shopId);
+        query.orderByDesc("purchase_time");
+        purchaseRecordMapper.selectPage(recordPage, query);
         return Response.success(new DTOPage<>(
                 recordPage.getTotal(),
                 recordPage.getPages(),

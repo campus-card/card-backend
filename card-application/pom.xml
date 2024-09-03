@@ -13,7 +13,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>card-application</name>
   <description>
-    项目启动模块
+    项目启动模块, 包含配置类, 配置文件, 启动类
   </description>
 
   <properties>
