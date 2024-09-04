@@ -54,8 +54,11 @@ public class StudentController {
                              @RequestParam
                                  @Positive(message = "购买数量必须为正数")
                                  @Max(value = 100, message = "购买数量最多为100")
-                                 Integer count) {
-        return studentService.purchase(productId, count);
+                                 Integer count,
+                             @RequestParam
+                                 @Pattern(regexp = "^[0-9]{6}$", message = "支付密码必须为6位数字")
+                                 String password) {
+        return studentService.purchase(productId, count, password);
     }
 
     /**
@@ -70,5 +73,25 @@ public class StudentController {
                                           @Max(value = 100, message = "每页数量最多为100")
                                           Integer pageSize) {
         return studentService.getPurchaseRecord(page, pageSize);
+    }
+
+    /**
+     * 学生获取商品列表 <br>
+     * order: 1->按上架时间排序 2->按价格排序 3->按库存排序
+     */
+    @GetMapping("/getProductList")
+    public Response getProductList(@RequestParam
+                                       @Positive(message = "页码必须为正数")
+                                       Integer page,
+                                   @RequestParam
+                                       @Positive(message = "每页数量必须为正数")
+                                       @Max(value = 100, message = "每页数量不能大于100")
+                                       Integer pageSize,
+                                   @RequestParam(defaultValue = "1")
+                                       @Positive(message = "排序字段必须为正数")
+                                       Integer order,
+                                   @RequestParam(defaultValue = "false")
+                                       Boolean isAsc) {
+        return studentService.getProductList(page, pageSize, order, isAsc);
     }
 }

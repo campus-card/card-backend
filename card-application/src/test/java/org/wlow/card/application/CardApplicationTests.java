@@ -16,6 +16,7 @@ import org.wlow.card.data.mapper.ProductMapper;
 import org.wlow.card.data.mapper.UserMapper;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Slf4j
 @SpringBootTest
@@ -51,7 +52,16 @@ class CardApplicationTests {
 
     @Test
     void mapper() {
+        Card card = Card.builder()
+                .userId(0)
+                .cardId("2021060100000")
+                .balance(BigDecimal.valueOf(99999))
+                .password("123456")
+                .createTime(LocalDateTime.now())
+                .build();
+        cardMapper.insert(card);
 
+        System.out.println("card.id = " + card.getId());
     }
 
     @Test

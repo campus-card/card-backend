@@ -29,7 +29,7 @@ public class GlobalHandler {
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public Response handleMissingServletRequestParameterException(MissingServletRequestParameterException e){
-        log.error("缺少请求参数: {} {}", e.getParameterType(), e.getParameterName());
+        log.warn("缺少请求参数: {} {}", e.getParameterType(), e.getParameterName());
         return Response.failure(400, "缺少请求参数: " + e.getParameterType() + " " + e.getParameterName());
     }
 
@@ -38,7 +38,7 @@ public class GlobalHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public Response handleIllegalArgumentException(IllegalArgumentException e){
-        log.error("非法参数: {}", e.getMessage());
+        log.warn("非法参数: {}", e.getMessage());
         return Response.failure(400, "非法参数: " + e.getMessage());
     }
 
@@ -57,13 +57,13 @@ public class GlobalHandler {
         } else {
             message = e.getMessage();
         }
-        log.error("参数校验未通过: {}", message);
+        log.warn("参数校验未通过: {}", message);
         return Response.failure(400, "参数校验未通过: " + message);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
-        log.error("不支持的请求方法: {}", e.getMethod());
+        log.warn("不支持的请求方法: {}", e.getMethod());
         return Response.failure(405, "不支持的请求方法: " + e.getMethod());
     }
 
@@ -77,7 +77,7 @@ public class GlobalHandler {
     public Response handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
         String parameterName = e.getName();
         String parameterType = e.getParameter().getParameterType().getName();
-        log.error("参数类型不匹配: 参数 {} 应当为 {} 类型", parameterName, parameterType);
+        log.warn("参数类型不匹配: 参数 {} 应当为 {} 类型", parameterName, parameterType);
         return Response.failure(400, "参数类型不匹配: 参数 " + parameterName + " 应当为 " + parameterType + " 类型");
     }
 

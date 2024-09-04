@@ -56,7 +56,10 @@ public class StudentService {
         if (res != 1) {
             return Response.failure(500, "注册校园卡失败");
         }
-        return Response.ok();
+        // MyBatisPlus插入后会自动回填主键id, 直接返回即可
+        newCard.setBalance(BigDecimal.ZERO);
+        newCard.setCreateTime(LocalDateTime.now());
+        return Response.success("开通成功", DTOCard.fromPO(newCard));
     }
 
     public Response getCardInfo() {
@@ -79,9 +82,16 @@ public class StudentService {
 
     // todo: 是否要设置为同步方法? synchronized?
     @Transactional(rollbackFor = Exception.class)
-    public Response purchase(Integer productId, Integer count) {
+    public Response purchase(Integer productId, Integer count, String password) {
         int studentId = CurrentUser.getId();
         Card card = ensureCardExists(studentId);
+
+        // 检查支付密码
+        if (!passwordEncoder.matches(password, card.getPassword())) {
+            return Response.failure(400, "支付密码错误");
+        }
+
+        // 检查商品状态
         Product product = productMapper.selectById(productId);
         if (product == null) {
             return Response.failure(400, "商品不存在");
@@ -138,6 +148,23 @@ public class StudentService {
                 recordPage.getTotal(),
                 recordPage.getPages(),
                 recordPage.getRecords()
+        ));
+    }
+
+    public Response getProductList(Integer page, Integer pageSize, Integer order, Boolean isAsc) {
+        Page<Product> productPage = Page.of(page, pageSize);
+        QueryWrapper<Product> query = new QueryWrapper<>();
+        query.orderBy(true, isAsc, switch (order) {
+            case 1 -> "upload_time";
+            case 2 -> "price";
+            case 3 -> "store";
+            default -> "id";
+        });
+        productMapper.selectPage(productPage, query);
+        return Response.success(new DTOPage<>(
+                productPage.getTotal(),
+                productPage.getPages(),
+                productPage.getRecords()
         ));
     }
 

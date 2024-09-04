@@ -18,7 +18,7 @@ public class AppHandler {
      */
     @ExceptionHandler(CampusCardNotFoundException.class)
     public Response handleCampusCardNotFoundException(CampusCardNotFoundException e) {
-        log.error("校园卡不存在: {}", e.getMessage());
+        log.warn("校园卡不存在: {}", e.getMessage());
         return Response.failure(404, "校园卡不存在: " + e.getMessage());
     }
 
@@ -27,7 +27,7 @@ public class AppHandler {
      */
     @ExceptionHandler(PurchaseException.class)
     public Response handlePurchaseException(PurchaseException e) {
-        log.error("商品购买异常: {}", e.getMessage());
+        log.warn("商品购买异常: {}", e.getMessage());
         return Response.failure(400, "商品购买异常: " + e.getMessage());
     }
 }
