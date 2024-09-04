@@ -2,6 +2,7 @@ package org.wlow.card.student;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -130,6 +131,8 @@ public class StudentService {
                 .purchaseTime(LocalDateTime.now())
                 .amount(amount)
                 .balance(card.getBalance())
+                .price(product.getPrice())
+                .store(product.getStore() - count)
                 .build();
         purchaseRecordMapper.insert(record);
 
@@ -139,11 +142,11 @@ public class StudentService {
     public Response getPurchaseRecord(Integer page, Integer pageSize) {
         int studentId = CurrentUser.getId();
         // ensureCardExists(studentId);
+        IPage<PurchaseRecord> recordPage = Page.of(page, pageSize);
         QueryWrapper<PurchaseRecord> query = new QueryWrapper<>();
         query.eq("student_id", studentId);
         query.orderByDesc("purchase_time");
-        Page<PurchaseRecord> recordPage = Page.of(page, pageSize);
-        purchaseRecordMapper.selectPage(recordPage, query);
+        recordPage = purchaseRecordMapper.selectPurchaseRecord(recordPage, query);
         return Response.success(new DTOPage<>(
                 recordPage.getTotal(),
                 recordPage.getPages(),

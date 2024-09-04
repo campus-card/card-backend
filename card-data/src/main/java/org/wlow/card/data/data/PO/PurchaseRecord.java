@@ -1,5 +1,6 @@
 package org.wlow.card.data.data.PO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,14 @@ public class PurchaseRecord {
      */
     private Integer count;
     /**
+     * 购买后商品剩余库存
+     */
+    private Integer store;
+    /**
+     * 购买时的商品价格
+     */
+    private BigDecimal price;
+    /**
      * 购买时间
      */
     private LocalDateTime purchaseTime;
@@ -42,7 +51,25 @@ public class PurchaseRecord {
      */
     private BigDecimal amount;
     /**
-     * 购买之后的学生的余额
+     * 购买之后的学生校园卡的余额
      */
     private BigDecimal balance;
+
+
+    /* =====连表查询的信息===== */
+    /**
+     * 购买商品的学生的用户名
+     */
+    @TableField(exist = false)
+    private String studentName;
+    /**
+     * 购买的商品的名字
+     */
+    @TableField(exist = false)
+    private String productName;
+    /**
+     * 购买的商品所在商户的用户名
+     */
+    @TableField(exist = false)
+    private String shopName;
 }

@@ -1,6 +1,9 @@
 package org.wlow.card.application;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -9,14 +12,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.wlow.card.auth.TokenType;
 import org.wlow.card.auth.JWTUtil;
 import org.wlow.card.data.data.PO.Card;
+import org.wlow.card.data.data.PO.PurchaseRecord;
 import org.wlow.card.data.data.PO.User;
 import org.wlow.card.data.data.constant.UserRole;
 import org.wlow.card.data.mapper.CardMapper;
 import org.wlow.card.data.mapper.ProductMapper;
+import org.wlow.card.data.mapper.PurchaseRecordMapper;
 import org.wlow.card.data.mapper.UserMapper;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Slf4j
 @SpringBootTest
@@ -29,6 +33,8 @@ class CardApplicationTests {
     private CardMapper cardMapper;
     @Resource
     private ProductMapper productMapper;
+    @Resource
+    private PurchaseRecordMapper purchaseRecordMapper;
 
     @Test
     void token() {
@@ -52,16 +58,14 @@ class CardApplicationTests {
 
     @Test
     void mapper() {
-        Card card = Card.builder()
-                .userId(0)
-                .cardId("2021060100000")
-                .balance(BigDecimal.valueOf(99999))
-                .password("123456")
-                .createTime(LocalDateTime.now())
-                .build();
-        cardMapper.insert(card);
-
-        System.out.println("card.id = " + card.getId());
+        IPage<PurchaseRecord> recordPage = Page.of(1, 10);
+        QueryWrapper<PurchaseRecord> wrapper = new QueryWrapper<>();
+        wrapper.eq("shop.id", 6);
+        wrapper.orderByDesc("purchase_time");
+        recordPage = purchaseRecordMapper.selectPurchaseRecord(recordPage, wrapper);
+        log.info("records: {}", recordPage.getRecords());
+        log.info("total: {}", recordPage.getTotal());
+        log.info("pages: {}", recordPage.getPages());
     }
 
     @Test
