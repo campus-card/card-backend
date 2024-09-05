@@ -23,6 +23,7 @@
     <module>card-data</module>
     <module>card-shop</module>
     <module>card-student</module>
+    <module>card-file</module>
   </modules>
 
   <properties>
@@ -36,6 +37,7 @@
     <card-data.version>0.0.1-SNAPSHOT</card-data.version>
     <card-shop.version>0.0.1-SNAPSHOT</card-shop.version>
     <card-student.version>0.0.1-SNAPSHOT</card-student.version>
+    <card-file.version>0.0.1-SNAPSHOT</card-file.version>
   </properties>
 
   <dependencies>
@@ -75,6 +77,11 @@
           <groupId>org.wlow.card</groupId>
           <artifactId>card-student</artifactId>
           <version>${card-student.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.wlow.card</groupId>
+          <artifactId>card-file</artifactId>
+          <version>${card-file.version}</version>
       </dependency>
       <!-- ======本项目模块<<<< -->
       <dependency>

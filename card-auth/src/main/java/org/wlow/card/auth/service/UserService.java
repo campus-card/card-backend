@@ -15,9 +15,6 @@ import org.wlow.card.data.data.constant.UserRole;
 import org.wlow.card.data.mapper.UserMapper;
 import org.wlow.card.data.redis.RedisUtil;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
-
 @Slf4j
 @Service
 public class UserService {
@@ -35,6 +32,7 @@ public class UserService {
         int userId = CurrentUser.getId();
         String userInfo = redisUtil.get("UserInfo:" + userId);
         if (userInfo == null) {
+            // 缓存中不存在则从数据库中获取
             User user = userMapper.selectById(userId);
             if (user == null) {
                 return Response.error("用户不存在");

@@ -40,6 +40,11 @@ class CardApplicationTests {
     private RedisUtil redisUtil;
 
     @Test
+    void test() {
+
+    }
+
+    @Test
     void token() {
         String token = jwtUtil.getToken(1, "admin", UserRole.Student, TokenType.ACCESS);
         log.info("token: {}", token);
