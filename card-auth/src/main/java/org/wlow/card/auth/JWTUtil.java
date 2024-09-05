@@ -49,7 +49,6 @@ public class JWTUtil {
                 .signWith(key, Jwts.SIG.HS256)
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION * 1000))
                 .compact();
-
     }
 
     /**

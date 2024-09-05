@@ -31,11 +31,20 @@ public class UserService {
     private JWTUtil jwtUtil;
 
     public Response getUserInfo() {
-        // 从redis缓存中获取用户信息
+        // 先尝试从redis缓存中获取用户信息
         int userId = CurrentUser.getId();
         String userInfo = redisUtil.get("UserInfo:" + userId);
         if (userInfo == null) {
-            return Response.failure(400, "用户不存在");
+            User user = userMapper.selectById(userId);
+            if (user == null) {
+                return Response.error("用户不存在");
+            }
+            try {
+                redisUtil.set("UserInfo:" + userId, objectMapper.writeValueAsString(DTOUser.fromPO(user)), jwtUtil.REFRESH_EXPIRATION);
+            } catch (JsonProcessingException e) {
+                log.error("写入redis缓存userinfo失败: {}", e.getMessage());
+            }
+            return Response.success(DTOUser.fromPO(user));
         }
         try {
             return Response.success(objectMapper.readValue(userInfo, DTOUser.class));

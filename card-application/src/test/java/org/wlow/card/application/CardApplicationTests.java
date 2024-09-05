@@ -19,6 +19,7 @@ import org.wlow.card.data.mapper.CardMapper;
 import org.wlow.card.data.mapper.ProductMapper;
 import org.wlow.card.data.mapper.PurchaseRecordMapper;
 import org.wlow.card.data.mapper.UserMapper;
+import org.wlow.card.data.redis.RedisUtil;
 
 import java.math.BigDecimal;
 
@@ -35,6 +36,8 @@ class CardApplicationTests {
     private ProductMapper productMapper;
     @Resource
     private PurchaseRecordMapper purchaseRecordMapper;
+    @Resource
+    private RedisUtil redisUtil;
 
     @Test
     void token() {
@@ -74,5 +77,11 @@ class CardApplicationTests {
         update.eq("user_id", 0);
         BigDecimal amount = BigDecimal.valueOf(123.45);
         cardMapper.recharge(amount, update);
+    }
+
+    @Test
+    void redis() {
+        String res = redisUtil.get("123");
+        log.info("res: {}", res);
     }
 }

@@ -11,9 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = {"org.wlow.card"})
 @MapperScan("org.wlow.card.data.mapper")
 public class CardApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CardApplication.class, args);
     }
-
 }

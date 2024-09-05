@@ -42,7 +42,7 @@
         <artifactId>mybatis-spring</artifactId>
     </dependency>
 
-    <!-- jackson -->
+    <!-- jackson注解, 主要用到其中的@JsonValue -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>

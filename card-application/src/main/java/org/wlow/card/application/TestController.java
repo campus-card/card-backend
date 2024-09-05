@@ -11,6 +11,9 @@ import org.wlow.card.data.redis.RedisUtil;
 
 import java.math.BigDecimal;
 
+/**
+ * 测试的controller, 不会被拦截器拦截
+ */
 @Slf4j
 @RestController
 @RequestMapping("/test")
@@ -41,7 +44,7 @@ public class TestController {
 
     @GetMapping("/getBlog")
     public Response getBlog(@RequestParam Integer id) {
-        Blog blog = blogMapper.selectById(id);
+        Blog blog = blogMapper.getById(id);
         if (blog == null) {
             return Response.failure(400, "博客不存在");
         }

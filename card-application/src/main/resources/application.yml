@@ -21,14 +21,14 @@ spring:
           min-idle: 0
           max-wait: 500ms
 
-# Redis键名的前缀
+# Redis键名的统一前缀
 redis-prefix: 'CampusCard:'
 
 server:
   port: 8192
   servlet:
     context-path: /api
-    # 设置响应编码格式强制为UTF-8, 否则过滤器中通过打印流直接响应中文时前端会收到乱码
+    # 设置响应编码格式强制为UTF-8, 否则过滤器/拦截器中通过打印流直接响应中文时前端会收到乱码
     encoding:
       charset: UTF-8
       force: true
@@ -38,10 +38,6 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
-  configuration:
-    # 禁用mybatis的一级缓存
-    local-cache-scope: statement
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # JWT
 jwt:

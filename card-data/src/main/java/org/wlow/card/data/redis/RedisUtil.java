@@ -21,6 +21,10 @@ public class RedisUtil {
         redisTemplate.opsForValue().set(prefix + key, value);
     }
 
+    /**
+     * 存入并设置过期时间
+     * @param expiration 过期时间, 单位为秒
+     */
     public void set(String key, String value, long expiration) {
         redisTemplate.opsForValue().set(prefix + key, value, expiration, TimeUnit.SECONDS);
     }
