@@ -1,6 +1,8 @@
 package org.wlow.card.auth.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.wlow.card.auth.JWTUtil;
 import org.wlow.card.auth.TokenType;
+import org.wlow.card.data.data.DTO.DTOUser;
 import org.wlow.card.data.data.PO.User;
 import org.wlow.card.data.data.DTO.Response;
 import org.wlow.card.data.data.constant.UserRole;
@@ -29,6 +32,8 @@ public class AuthService {
     private UserMapper userMapper;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private ObjectMapper objectMapper;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -69,7 +74,13 @@ public class AuthService {
         String accessToken = jwtUtil.getToken(user.getId(), user.getUsername(), user.getRole(), TokenType.ACCESS);
         String refreshToken = jwtUtil.getToken(user.getId(), user.getUsername(), user.getRole(), TokenType.REFRESH);
         // RefreshToken:role:userId
-        redisUtil.set("RefreshToken:" + user.getRole() + ":" + user.getId(), refreshToken, jwtUtil.REFRESH_EXPIRATION);
+        redisUtil.set("RefreshToken:" + user.getId(), refreshToken, jwtUtil.REFRESH_EXPIRATION);
+        // 同时缓存用户信息
+        try {
+            redisUtil.set("UserInfo:" + user.getId(), objectMapper.writeValueAsString(DTOUser.fromPO(user)), jwtUtil.REFRESH_EXPIRATION);
+        } catch (JsonProcessingException e) {
+            log.error("缓存用户信息失败: {}", e.getMessage());
+        }
 
         return Response.success(Map.of("id", user.getId(), "username", user.getUsername(), "role", role.value, "accessToken", accessToken, "refreshToken", refreshToken));
     }
@@ -92,7 +103,7 @@ public class AuthService {
         String username = payload.get("username", String.class);
         String role = payload.get("role", String.class);
 
-        String refreshTokenCached = redisUtil.get("RefreshToken:" + role + ":" + userId);
+        String refreshTokenCached = redisUtil.get("RefreshToken:" + userId);
         if (!refreshToken.equals(refreshTokenCached)) {
             // refreshToken不匹配
             return Response.forbidden("无效的refreshToken");
@@ -101,11 +112,13 @@ public class AuthService {
         String accessToken = jwtUtil.getToken(userId, username, UserRole.valueOf(role), TokenType.ACCESS);
         Map<String, String> res = new HashMap<>();
         res.put("accessToken", accessToken);
-        Long expiration = redisUtil.getExpire("RefreshToken:" + role + ":" + userId);
+        Long expiration = redisUtil.getExpire("RefreshToken:" + userId);
         if (expiration <= jwtUtil.REFRESH_BOUND) {
             // 刷新refreshToken
             String newRefreshToken = jwtUtil.getToken(userId, username, UserRole.valueOf(role), TokenType.REFRESH);
-            redisUtil.set("RefreshToken:" + role + ":" + userId, newRefreshToken, jwtUtil.REFRESH_EXPIRATION);
+            redisUtil.set("RefreshToken:" + userId, newRefreshToken, jwtUtil.REFRESH_EXPIRATION);
+            // 更新用户信息缓存
+            redisUtil.set("UserInfo:" + userId, redisUtil.get("UserInfo:" + userId), jwtUtil.REFRESH_EXPIRATION);
             res.put("refreshToken", newRefreshToken);
         } else {
             res.put("refreshToken", refreshToken);

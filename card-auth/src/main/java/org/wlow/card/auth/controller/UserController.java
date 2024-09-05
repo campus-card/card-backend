@@ -12,7 +12,8 @@ public class UserController {
     @Resource
     private UserService userService;
     /**
-     * 获取用户个人信息
+     * 获取用户个人信息 <br>
+     * 从redis缓存中获取
      */
     @GetMapping("/getUserInfo")
     public Response getUserInfo() {

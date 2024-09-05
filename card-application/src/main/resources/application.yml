@@ -35,11 +35,13 @@ server:
 
 # mybatis-plus
 mybatis-plus:
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       id-type: auto
+  configuration:
+    # 禁用mybatis的一级缓存
+    local-cache-scope: statement
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # JWT
 jwt:
