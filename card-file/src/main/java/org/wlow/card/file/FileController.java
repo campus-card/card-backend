@@ -9,13 +9,18 @@ import org.springframework.web.multipart.MultipartFile;
 import org.wlow.card.data.data.DTO.Response;
 
 @RestController
-@RequestMapping("/file-service")
+@RequestMapping("/fileService")
 public class FileController {
     @Resource
     private FileService fileService;
 
-    @PostMapping("/upload")
+    @PostMapping("/uploadFile")
     public Response upload(@RequestParam MultipartFile file) {
         return fileService.putFile(file);
+    }
+
+    @PostMapping("/uploadImage")
+    public Response uploadImage(@RequestParam MultipartFile image) {
+        return fileService.putImage(image);
     }
 }

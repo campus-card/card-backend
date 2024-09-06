@@ -1,13 +1,18 @@
 package org.wlow.card.file;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.wlow.card.data.data.PO.FileEntry;
+import org.wlow.card.data.data.constant.CurrentUser;
+import org.wlow.card.data.mapper.FileEntryMapper;
 import org.wlow.card.file.exception.FileUploadException;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -16,6 +21,9 @@ public class FileUtil {
     private String serverUrl;
     @Value("${file-service.local-path}")
     private String fileLocalPath;
+
+    @Resource
+    private FileEntryMapper fileEntryMapper;
 
     /**
      * 上传文件到本地指定路径并返回前端浏览器能直接访问的虚拟路径
@@ -26,10 +34,7 @@ public class FileUtil {
      * @return 前端浏览器能直接访问的虚拟路径, 比如 <a href="http://localhost:8192/file/xxx.jpg">this</a>
      */
     public String putFile(MultipartFile file, String dirName, String fileName, String virtualPath) {
-        // 单位是字节
-        long size = file.getSize();
-        log.info("size = {}", size);
-        if (size == 0) {
+        if (file.isEmpty()) {
             throw new FileUploadException("文件为空");
         }
         String originalFilename = file.getOriginalFilename();
@@ -42,21 +47,36 @@ public class FileUtil {
             throw new FileUploadException("没有类型的文件");
         }
         String extname = originalFilename.substring(index);
-        log.info("extname = {}", extname);
         
         // 保存文件到本地
         StringBuilder path = new StringBuilder(fileLocalPath);
         int fileLocalPathLength = path.length();
         // 确保父级文件夹存在
-        File parentFile = new File(path.append("/").append(dirName).toString());
-        if (!parentFile.exists() && !parentFile.mkdirs()) {
+        File parentDir = new File(path.append("/").append(dirName).toString());
+        String parentDirAbsolutePath;
+        if (!parentDir.exists() && !parentDir.mkdirs()) {
             throw new FileUploadException("父级目录创建异常");
         }
+
+        // 保存文件到本地
         try {
-            file.transferTo(new File(path.append("/").append(fileName).append(extname).toString()));
+            parentDirAbsolutePath = parentDir.getCanonicalPath();
+            file.transferTo(new File(path.append("/").append(fileName).append(extname).toString()).getCanonicalFile());
         } catch (IOException e) {
-            throw new FileUploadException("文件保存异常");
+            throw new FileUploadException("文件保存异常: " + e.getMessage());
         }
+
+        // 记录文件上传信息
+        FileEntry fileEntry = FileEntry.builder()
+                .userId(CurrentUser.getId())
+                .filename(fileName)
+                .directory(parentDirAbsolutePath)
+                .extname(extname)
+                // 单位是字节
+                .size(file.getSize())
+                .uploadTime(LocalDateTime.now())
+                .build();
+        fileEntryMapper.insert(fileEntry);
 
         // 生成返回给前端的虚拟web路径
         path.replace(0, fileLocalPathLength, serverUrl + virtualPath);

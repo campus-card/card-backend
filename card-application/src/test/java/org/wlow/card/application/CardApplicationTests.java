@@ -21,7 +21,10 @@ import org.wlow.card.data.mapper.PurchaseRecordMapper;
 import org.wlow.card.data.mapper.UserMapper;
 import org.wlow.card.data.redis.RedisUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 
 @Slf4j
 @SpringBootTest
@@ -40,8 +43,14 @@ class CardApplicationTests {
     private RedisUtil redisUtil;
 
     @Test
-    void test() {
+    void test() throws IOException {
+        File file = new File("../resources/a.txt");
+        log.info("file: {}", file.getAbsolutePath());
+        // 解析路径中的相对路径
+        log.info("target: {}", Paths.get(file.getPath()));
 
+        log.info("file: {}", file.getCanonicalPath());
+        log.info("exists: {}", file.exists());
     }
 
     @Test

@@ -27,7 +27,7 @@ redis-prefix: 'CampusCard:'
 server:
   port: 8192
   servlet:
-    context-path: /api
+    context-path: /campusCard
     # 设置响应编码格式强制为UTF-8, 否则过滤器/拦截器中通过打印流直接响应中文时前端会收到乱码
     encoding:
       charset: UTF-8
@@ -44,12 +44,13 @@ file-service:
   # 要存到数据库里的服务器地址, 一般为SpringBoot服务器地址
   server-url: http://localhost:8192
   # 本地文件存储路径
-  local-path: ../resources
+  local-path: ../resources/
   # 虚拟路径. 之所以区分file和image是因为file可能是任意文件, 而image是图片文件, 可以通过浏览器直接访问
   # 要单独为设置AuthInterceptor的白名单, 以允许直接访问
   virtual-path:
+    # 会从context-path开始, 前端请求时仍然要加上context-path
     file: /file/**
-    image: /image/**
+    image: /img/**
 
 # JWT
 jwt:

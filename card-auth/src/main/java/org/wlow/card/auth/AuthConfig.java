@@ -24,7 +24,7 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/**/auth/**",
                         "/**/test/**",
                         // 放行图片请求, 以便前端能够正常显示图片, 其他文件的请求暂时不放行
-                        "/**/image/**",
+                        "/**/img/image/**",
                         "/**/error"
                 ));
         registry.addInterceptor(permissionInterceptor)
