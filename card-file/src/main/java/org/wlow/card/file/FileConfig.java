@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class FileConfig implements WebMvcConfigurer {
-    @Value("${file-service.local-path}")
+    @Value("${file-service.local-path.root}")
     private String localPath;
     @Value("${file-service.virtual-path.file}")
     private String fileVirtualPath;

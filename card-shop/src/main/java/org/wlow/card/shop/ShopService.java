@@ -5,14 +5,21 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.wlow.card.data.data.DTO.DTOPage;
 import org.wlow.card.data.data.DTO.Response;
+import org.wlow.card.data.data.PO.FileEntry;
 import org.wlow.card.data.data.PO.Product;
 import org.wlow.card.data.data.PO.PurchaseRecord;
 import org.wlow.card.data.data.constant.CurrentUser;
+import org.wlow.card.data.mapper.FileEntryMapper;
 import org.wlow.card.data.mapper.ProductMapper;
 import org.wlow.card.data.mapper.PurchaseRecordMapper;
+import org.wlow.card.file.FileService;
+import org.wlow.card.file.exception.FileSystemException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,12 +27,25 @@ import java.util.Objects;
 
 @Service
 public class ShopService {
+    @Value("${file-service.server-url}")
+    private String serverUrl;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+    @Value("${file-service.virtual-path.image}")
+    private String imageVirtualPath;
+    @Value("${file-service.local-path.dir.image}")
+    private String imageLocalDir;
+
     @Resource
     private ProductMapper productMapper;
     @Resource
     private PurchaseRecordMapper purchaseRecordMapper;
+    @Resource
+    private FileService fileService;
+    @Resource
+    private FileEntryMapper fileEntryMapper;
 
-    public Response addProduct(String name, String description, BigDecimal price, Integer store) {
+    public Response addProduct(String name, String description, BigDecimal price, Integer store, MultipartFile cover) {
         Product product = Product.builder()
                 .name(name)
                 .shopId(CurrentUser.getId())
@@ -33,6 +53,11 @@ public class ShopService {
                 .price(price)
                 .store(store)
                 .build();
+        // 如果有图片则保存图片
+        if (cover != null) {
+            FileEntry coverFile = fileService.putImageEntry(cover);
+            product.setCoverId(coverFile.getId());
+        }
         int res = productMapper.insert(product);
         if (res == 1) {
             return Response.ok();
@@ -41,6 +66,7 @@ public class ShopService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Response deleteProduct(Integer id) {
         Product target = productMapper.selectById(id);
         if (target == null) {
@@ -48,6 +74,15 @@ public class ShopService {
         }
         if (!Objects.equals(target.getShopId(), CurrentUser.getId())) {
             return Response.failure(403, "不能删除其他商家的商品");
+        }
+        // 先删除商品对应的图片
+        FileEntry cover = fileEntryMapper.selectById(target.getCoverId());
+        // 如果商品有图片则删除图片
+        if (cover != null) {
+            boolean delete = fileService.deleteFile(cover);
+            if (!delete) {
+                throw new FileSystemException("删除本地商品图片文件失败");
+            }
         }
         int res = productMapper.deleteById(id);
         if (res == 1) {
@@ -87,7 +122,7 @@ public class ShopService {
     }
 
     public Response getProductList(Integer page, Integer pageSize, Integer order, Boolean isAsc) {
-        Page<Product> productPage = Page.of(page, pageSize);
+        IPage<Product> productPage = Page.of(page, pageSize);
         QueryWrapper<Product> query = new QueryWrapper<>();
         query.eq("shop_id", CurrentUser.getId());
         query.orderBy(true, isAsc, switch (order) {
@@ -96,7 +131,12 @@ public class ShopService {
             case 3 -> "store";
             default -> "id";
         });
-        productMapper.selectPage(productPage, query);
+        // 通过application.yml配置内容将图片url的前缀拼接传入
+        productPage = productMapper.selectPageWithCoverUrl(productPage, query,
+                // 拼接图片url的前缀. 其中imageVirtualPath后面的"/**"要去掉
+                serverUrl + contextPath + imageVirtualPath.substring(0, imageVirtualPath.length() - 3) + imageLocalDir + "/"
+        );
+
         return Response.success(new DTOPage<>(
                 productPage.getTotal(),
                 productPage.getPages(),

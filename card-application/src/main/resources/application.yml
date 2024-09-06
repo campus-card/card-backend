@@ -20,6 +20,12 @@ spring:
           max-idle: 8
           min-idle: 0
           max-wait: 500ms
+  servlet:
+    multipart:
+      # 设置最大上传文件大小, 默认为1MB
+      max-file-size: 5MB
+        # 设置最大请求大小(包含文件和表单数据), 默认为10MB
+      max-request-size: 20MB
 
 # Redis键名的统一前缀
 redis-prefix: 'CampusCard:'
@@ -41,14 +47,20 @@ mybatis-plus:
 
 # 文件上传
 file-service:
-  # 要存到数据库里的服务器地址, 一般为SpringBoot服务器地址
+  # 要存到数据库里的服务器地址, 用于拼接生成前端直接访问的虚拟路径. 一般为SpringBoot服务器地址
   server-url: http://localhost:8192
   # 本地文件存储路径
-  local-path: ../resources/
+  local-path:
+    # 本地目录根路径
+    root: ./upload/
+    # 本地文件存储目录
+    dir:
+      file: /file
+      image: /image
   # 虚拟路径. 之所以区分file和image是因为file可能是任意文件, 而image是图片文件, 可以通过浏览器直接访问
-  # 要单独为设置AuthInterceptor的白名单, 以允许直接访问
+  # 要单独为设置AuthInterceptor的白名单, 以免前端获取图片时被拦截
   virtual-path:
-    # 会从context-path开始, 前端请求时仍然要加上context-path
+    # 会受到context-path影响, 前端请求时仍然要加上context-path
     file: /file/**
     image: /img/**
 

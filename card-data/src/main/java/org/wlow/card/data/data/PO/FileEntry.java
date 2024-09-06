@@ -1,5 +1,6 @@
 package org.wlow.card.data.data.PO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,4 +41,9 @@ public class FileEntry {
      * 上传时间
      */
     private LocalDateTime uploadTime;
+    /**
+     * 文件的虚拟路径, 用于前端浏览器访问, 不存储在数据库中
+     */
+    @TableField(exist = false)
+    private String webPath;
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.wlow.card.data.data.DTO.Response;
+import org.wlow.card.file.exception.FileSystemException;
 import org.wlow.card.file.exception.FileUploadException;
 import org.wlow.card.student.exception.CampusCardNotFoundException;
 import org.wlow.card.student.exception.PurchaseException;
@@ -36,5 +37,11 @@ public class AppHandler {
     public Response handleFileUploadException(FileUploadException e) {
         log.warn("文件上传异常: {}", e.getMessage());
         return Response.failure(400, "文件上传异常: " + e.getMessage());
+    }
+
+    @ExceptionHandler(FileSystemException.class)
+    public Response handleFileSystemException(FileSystemException e) {
+        log.warn("文件系统异常: {}", e.getMessage());
+        return Response.error("文件系统异常: " + e.getMessage());
     }
 }

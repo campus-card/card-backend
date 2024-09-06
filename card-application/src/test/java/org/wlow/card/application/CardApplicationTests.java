@@ -8,12 +8,15 @@ import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.wlow.card.auth.TokenType;
 import org.wlow.card.auth.JWTUtil;
 import org.wlow.card.data.data.PO.Card;
+import org.wlow.card.data.data.PO.Product;
 import org.wlow.card.data.data.PO.PurchaseRecord;
 import org.wlow.card.data.data.PO.User;
+import org.wlow.card.data.data.constant.CurrentUser;
 import org.wlow.card.data.data.constant.UserRole;
 import org.wlow.card.data.mapper.CardMapper;
 import org.wlow.card.data.mapper.ProductMapper;
@@ -29,6 +32,15 @@ import java.nio.file.Paths;
 @Slf4j
 @SpringBootTest
 class CardApplicationTests {
+    @Value("${file-service.server-url}")
+    private String serverUrl;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+    @Value("${file-service.virtual-path.image}")
+    private String imageVirtualPath;
+    @Value("${file-service.local-path.dir.image}")
+    private String imageLocalDir;
+
     @Resource
     private JWTUtil jwtUtil;
     @Resource
@@ -75,14 +87,12 @@ class CardApplicationTests {
 
     @Test
     void mapper() {
-        IPage<PurchaseRecord> recordPage = Page.of(1, 10);
-        QueryWrapper<PurchaseRecord> wrapper = new QueryWrapper<>();
-        wrapper.eq("shop.id", 6);
-        wrapper.orderByDesc("purchase_time");
-        recordPage = purchaseRecordMapper.selectPurchaseRecord(recordPage, wrapper);
-        log.info("records: {}", recordPage.getRecords());
-        log.info("total: {}", recordPage.getTotal());
-        log.info("pages: {}", recordPage.getPages());
+        Page<Product> productPage = Page.of(1, 10);
+        QueryWrapper<Product> query = new QueryWrapper<>();
+        query.eq("shop_id", 6);
+        query.orderByDesc("upload_time");
+        productMapper.selectPageWithCoverUrl(productPage, query, serverUrl + contextPath + imageVirtualPath.substring(0, imageVirtualPath.length() - 3) + imageLocalDir + "/");
+        log.info("productPage: {}", productPage.getRecords());
     }
 
     @Test

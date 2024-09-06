@@ -1,5 +1,6 @@
 package org.wlow.card.data.data.PO;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,15 @@ public class Product {
      * 商品描述
      */
     private String description;
+    /**
+     * 商品图片对应的 {@link FileEntry} 的id
+     */
+    private Integer coverId;
+    /**
+     * 商品封面图片的url
+     */
+    @TableField(exist = false)
+    private String coverUrl;
     private BigDecimal price;
     /**
      * 商品库存

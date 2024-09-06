@@ -5,6 +5,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.wlow.card.data.data.DTO.Response;
 
 import java.math.BigDecimal;
@@ -31,12 +32,14 @@ public class ShopController {
                                    BigDecimal price,
                                @RequestParam
                                    @PositiveOrZero(message = "商品库存不能为负数")
-                                   Integer store) {
-        return shopService.addProduct(name, description, price, store);
+                                   Integer store,
+                               @RequestParam(required = false)
+                                   MultipartFile cover) {
+        return shopService.addProduct(name, description, price, store, cover);
     }
 
     /**
-     * 删除商品
+     * 删除商品. 如果商品有图片则删除对应图片
      */
     @DeleteMapping("/deleteProduct")
     public Response deleteProduct(@RequestParam Integer id) {
