@@ -92,7 +92,8 @@ public class ShopService {
         }
     }
 
-    public Response modifyProduct(Integer id, String name, String description, BigDecimal price, Integer store) {
+    @Transactional(rollbackFor = Exception.class)
+    public Response modifyProduct(Integer id, String name, String description, BigDecimal price, Integer store, MultipartFile cover) {
         Product target = productMapper.selectById(id);
         if (target == null) {
             return Response.failure(404, "商品不存在");
@@ -103,6 +104,22 @@ public class ShopService {
 
         UpdateWrapper<Product> update = new UpdateWrapper<>();
         update.eq("id", id);
+
+        // 如果有图片则修改图片
+        if (cover != null) {
+            // 如果已经有旧的封面图片的话得先删除
+            Integer oldCoverId = target.getCoverId();
+            if (oldCoverId != null) {
+                FileEntry oldCover = fileEntryMapper.selectById(oldCoverId);
+                if (!fileService.deleteFile(oldCover)) {
+                    throw new FileSystemException("删除本地商品旧图片文件失败");
+                }
+            }
+            FileEntry coverFile = fileService.putImageEntry(cover);
+            target.setCoverId(coverFile.getId());
+            update.set("cover_id", coverFile.getId());
+        }
+
         if (name != null) {
             if (name.isBlank()) {
                 return Response.failure(400, "商品名称不能为空");
@@ -133,8 +150,8 @@ public class ShopService {
         });
         // 通过application.yml配置内容将图片url的前缀拼接传入
         productPage = productMapper.selectPageWithCoverUrl(productPage, query,
-                // 拼接图片url的前缀. 其中imageVirtualPath后面的"/**"要去掉
-                serverUrl + contextPath + imageVirtualPath.substring(0, imageVirtualPath.length() - 3) + imageLocalDir + "/"
+                // 拼接图片url的前缀
+                serverUrl + contextPath + imageVirtualPath + imageLocalDir + "/"
         );
 
         return Response.success(new DTOPage<>(

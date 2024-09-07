@@ -61,8 +61,8 @@ file-service:
   # 要单独为设置AuthInterceptor的白名单, 以免前端获取图片时被拦截
   virtual-path:
     # 会受到context-path影响, 前端请求时仍然要加上context-path
-    file: /file/**
-    image: /img/**
+    file: /file
+    image: /img
 
 # JWT
 jwt:

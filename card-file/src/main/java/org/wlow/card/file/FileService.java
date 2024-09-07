@@ -71,9 +71,8 @@ public class FileService {
 
     private FileEntry saveFile(MultipartFile file, String dirname, String virtualPath) {
         UUID uuid = UUID.randomUUID();
-        // fileVirtualPath后面的"/**"要去掉
         // 静态资源访问仍会收到contextPath的影响, 需要在虚拟路径前面加上contextPath
-        return fileUtil.putFile(file, dirname, uuid.toString(), contextPath + virtualPath.substring(0, virtualPath.length() - 3));
+        return fileUtil.putFile(file, dirname, uuid.toString(), contextPath + virtualPath);
     }
 
     public boolean deleteFile(FileEntry fileEntry) {

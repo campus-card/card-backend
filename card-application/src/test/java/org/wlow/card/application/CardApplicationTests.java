@@ -91,7 +91,7 @@ class CardApplicationTests {
         QueryWrapper<Product> query = new QueryWrapper<>();
         query.eq("shop_id", 6);
         query.orderByDesc("upload_time");
-        productMapper.selectPageWithCoverUrl(productPage, query, serverUrl + contextPath + imageVirtualPath.substring(0, imageVirtualPath.length() - 3) + imageLocalDir + "/");
+        productMapper.selectPageWithCoverUrl(productPage, query, serverUrl + contextPath + imageVirtualPath + imageLocalDir + "/");
         log.info("productPage: {}", productPage.getRecords());
     }
 

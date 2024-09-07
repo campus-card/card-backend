@@ -16,9 +16,10 @@ public interface ProductMapper extends BaseMapper<Product> {
     @Update("update product set store = store - #{count}, sales = sales + #{count} where id = #{id}")
     int updateStoreAndSales(Integer id, Integer count);
 
+    // note: 有的商品可能没有封面, 所以要用左连接
     @Select("select p.*, concat(#{webUrlPrefix}, fe.filename, fe.extname) cover_url " +
             "from product p " +
-            "join file_entry fe on p.cover_id = fe.id " +
+            "left join file_entry fe on p.cover_id = fe.id " +
             "where ${ew.sqlSegment}")
     IPage<Product> selectPageWithCoverUrl(IPage<Product> page, @Param(Constants.WRAPPER) Wrapper<Product> wrapper, String webUrlPrefix);
 }

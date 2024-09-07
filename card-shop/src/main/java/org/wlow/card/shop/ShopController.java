@@ -65,8 +65,10 @@ public class ShopController {
                                   @RequestParam(required = false)
                                       @Nullable
                                       @PositiveOrZero(message = "商品库存不能为负数")
-                                      Integer store) {
-        return shopService.modifyProduct(id, name, description, price, store);
+                                      Integer store,
+                                  @RequestParam(required = false)
+                                      MultipartFile cover) {
+        return shopService.modifyProduct(id, name, description, price, store, cover);
     }
 
     /**

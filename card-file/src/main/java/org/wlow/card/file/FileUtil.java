@@ -32,7 +32,7 @@ public class FileUtil {
      * @param dirname file的本地父级文件夹名
      * @param filename 存储在本地的文件名. 使用UUID生成
      * @param virtualPath 虚拟路径, 用于前端浏览器访问
-     * @return 前端浏览器能直接访问的虚拟路径, 比如 <a href="http://localhost:8192/file/xxx.jpg">this</a>
+     * @return FileEntry对象, 其webPath属性为前端浏览器能直接访问的虚拟路径, 比如 <a href="http://localhost:8192/file/xxx.jpg">this</a>
      */
     public FileEntry putFile(MultipartFile file, String dirname, String filename, String virtualPath) {
         if (file.isEmpty()) {

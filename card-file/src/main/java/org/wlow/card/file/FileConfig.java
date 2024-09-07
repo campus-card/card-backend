@@ -19,11 +19,11 @@ public class FileConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(fileVirtualPath) // 虚拟请求路径
+        registry.addResourceHandler(fileVirtualPath + "/**") // 虚拟请求路径
                 .addResourceLocations("file:" + localPath) // 映射到的本地文件路径
                 .resourceChain(true);
         // 单独为image配置虚拟请求路径, 因为要设置AuthInterceptor不拦截图片请求
-        registry.addResourceHandler(imageVirtualPath)
+        registry.addResourceHandler(imageVirtualPath + "/**")
                 .addResourceLocations("file:" + localPath)
                 .resourceChain(true);
     }

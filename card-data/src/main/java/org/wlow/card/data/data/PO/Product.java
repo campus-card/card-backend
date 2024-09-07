@@ -1,6 +1,7 @@
 package org.wlow.card.data.data.PO;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,8 +32,9 @@ public class Product {
      */
     private String description;
     /**
-     * 商品图片对应的 {@link FileEntry} 的id
+     * 商品图片对应的 {@link FileEntry} 的id, 不需要返回给前端
      */
+    @JsonIgnore
     private Integer coverId;
     /**
      * 商品封面图片的url
