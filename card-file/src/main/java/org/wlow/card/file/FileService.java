@@ -36,7 +36,7 @@ public class FileService {
      */
     public Response putFile(MultipartFile file) {
         FileEntry fileEntry = saveFile(file, fileLocalDir, fileVirtualPath);
-        return Response.success(fileEntry.getWebPath());
+        return Response.success(fileEntry.getWebUrl());
     }
 
     /**
@@ -48,7 +48,7 @@ public class FileService {
             return Response.failure(400, "非图片文件");
         }
         FileEntry fileEntry = saveFile(image, imageLocalDir, imageVirtualPath);
-        return Response.success(fileEntry.getWebPath());
+        return Response.success(fileEntry.getWebUrl());
     }
 
     /**

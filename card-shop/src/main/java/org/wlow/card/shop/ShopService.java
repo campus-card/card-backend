@@ -1,7 +1,6 @@
 package org.wlow.card.shop;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
@@ -45,7 +44,7 @@ public class ShopService {
     @Resource
     private FileEntryMapper fileEntryMapper;
 
-    public Response addProduct(String name, String description, BigDecimal price, Integer store, MultipartFile cover) {
+    public Response<String> addProduct(String name, String description, BigDecimal price, Integer store, MultipartFile cover) {
         Product product = Product.builder()
                 .name(name)
                 .shopId(CurrentUser.getId())
@@ -67,7 +66,7 @@ public class ShopService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Response deleteProduct(Integer id) {
+    public Response<String> deleteProduct(Integer id) {
         Product target = productMapper.selectById(id);
         if (target == null) {
             return Response.failure(404, "商品不存在");
@@ -93,17 +92,18 @@ public class ShopService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Response modifyProduct(Integer id, String name, String description, BigDecimal price, Integer store, MultipartFile cover) {
-        Product target = productMapper.selectById(id);
+    public Response<Product> modifyProduct(Integer id, String name, String description, BigDecimal price, Integer store, MultipartFile cover) {
+        Product target = productMapper.selectByIdWithCoverUrl(
+                id,
+                // 拼接图片url的前缀
+                serverUrl + contextPath + imageVirtualPath + imageLocalDir + "/"
+        );
         if (target == null) {
             return Response.failure(404, "商品不存在");
         }
         if (!Objects.equals(target.getShopId(), CurrentUser.getId())) {
             return Response.failure(403, "不能修改其他商家的商品信息");
         }
-
-        UpdateWrapper<Product> update = new UpdateWrapper<>();
-        update.eq("id", id);
 
         // 如果有图片则修改图片
         if (cover != null) {
@@ -117,28 +117,30 @@ public class ShopService {
             }
             FileEntry coverFile = fileService.putImageEntry(cover);
             target.setCoverId(coverFile.getId());
-            update.set("cover_id", coverFile.getId());
+            target.setCoverUrl(coverFile.getWebUrl());
         }
 
         if (name != null) {
             if (name.isBlank()) {
                 return Response.failure(400, "商品名称不能为空");
             }
-            update.set("name", name);
+            target.setName(name);
         }
-        update.set(description != null, "description", description);
-        update.set(price != null, "price", price);
-        update.set(store != null, "store", store);
-        update.set("modify_time", LocalDateTime.now());
-        int res = productMapper.update(update);
+        if (description != null) target.setDescription(description);
+        if (price != null) target.setPrice(price);
+        if (store != null) target.setStore(store);
+        target.setModifyTime(LocalDateTime.now());
+
+        int res = productMapper.updateById(target);
         if (res == 1) {
-            return Response.ok();
+            // 修改成功后返回修改后的商品信息
+            return Response.success(target);
         } else {
             return Response.failure(500, "修改商品信息失败");
         }
     }
 
-    public Response getProductList(Integer page, Integer pageSize, Integer order, Boolean isAsc) {
+    public Response<DTOPage<Product>> getProductList(Integer page, Integer pageSize, Integer order, Boolean isAsc) {
         IPage<Product> productPage = Page.of(page, pageSize);
         QueryWrapper<Product> query = new QueryWrapper<>();
         query.eq("shop_id", CurrentUser.getId());
@@ -161,7 +163,7 @@ public class ShopService {
         ));
     }
 
-    public Response getSalesRecord(Integer page, Integer pageSize) {
+    public Response<DTOPage<PurchaseRecord>> getSalesRecord(Integer page, Integer pageSize) {
         int shopId = CurrentUser.getId();
         IPage<PurchaseRecord> recordPage = Page.of(page, pageSize);
         QueryWrapper<PurchaseRecord> query = new QueryWrapper<>();

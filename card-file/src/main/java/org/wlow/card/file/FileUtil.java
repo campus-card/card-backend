@@ -78,7 +78,7 @@ public class FileUtil {
                 .size(file.getSize())
                 .uploadTime(LocalDateTime.now())
                 // 生成返回给前端的虚拟web路径
-                .webPath(path.replace(0, fileLocalPathLength, serverUrl + virtualPath).toString())
+                .webUrl(path.replace(0, fileLocalPathLength, serverUrl + virtualPath).toString())
                 .build();
         fileEntryMapper.insert(fileEntry);
         

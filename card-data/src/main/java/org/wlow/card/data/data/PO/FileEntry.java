@@ -26,7 +26,8 @@ public class FileEntry {
      */
     private String filename;
     /**
-     * 文件所在的父级路径(绝对路径)
+     * 文件所在的父级路径(绝对路径) <br>
+     * <b>存储的是本地磁盘绝对路径. 之所以不用配置文件里的local-path和dir拼接生成, 是因为配置文件可能会修改</b>
      */
     private String directory;
     /**
@@ -45,5 +46,5 @@ public class FileEntry {
      * 文件的虚拟路径, 用于前端浏览器访问, 不存储在数据库中
      */
     @TableField(exist = false)
-    private String webPath;
+    private String webUrl;
 }

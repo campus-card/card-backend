@@ -47,7 +47,7 @@ mybatis-plus:
 
 # 文件上传
 file-service:
-  # 要存到数据库里的服务器地址, 用于拼接生成前端直接访问的虚拟路径. 一般为SpringBoot服务器地址
+  # 要返回给前端的服务器地址, 用于拼接生成前端直接访问的虚拟路径
   server-url: http://localhost:8192
   # 本地文件存储路径
   local-path:

@@ -18,11 +18,9 @@ import org.wlow.card.data.data.PO.PurchaseRecord;
 import org.wlow.card.data.data.PO.User;
 import org.wlow.card.data.data.constant.CurrentUser;
 import org.wlow.card.data.data.constant.UserRole;
-import org.wlow.card.data.mapper.CardMapper;
-import org.wlow.card.data.mapper.ProductMapper;
-import org.wlow.card.data.mapper.PurchaseRecordMapper;
-import org.wlow.card.data.mapper.UserMapper;
+import org.wlow.card.data.mapper.*;
 import org.wlow.card.data.redis.RedisUtil;
+import org.wlow.card.file.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,6 +51,10 @@ class CardApplicationTests {
     private PurchaseRecordMapper purchaseRecordMapper;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private FileUtil fileUtil;
+    @Resource
+    private FileEntryMapper fileEntryMapper;
 
     @Test
     void test() throws IOException {
@@ -107,5 +109,10 @@ class CardApplicationTests {
     void redis() {
         String res = redisUtil.get("123");
         log.info("res: {}", res);
+    }
+
+    @Test
+    void file() {
+
     }
 }
