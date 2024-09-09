@@ -27,7 +27,7 @@ public interface ProductMapper extends BaseMapper<Product> {
     // note: 有的商品可能没有封面, 所以要用左连接 (数据库字段允许null导致的)
     @Select("select p.*, concat(#{webUrlPrefix}, fe.filename, fe.extname) cover_url " +
             "from product p " +
-            "left join file_entry fe on p.cover_id = fe.id " +
+            "join file_entry fe on p.cover_id = fe.id " +
             "where ${ew.sqlSegment}")
     IPage<Product> selectPageWithCoverUrl(IPage<Product> page, @Param(Constants.WRAPPER) Wrapper<Product> wrapper, String webUrlPrefix);
 }

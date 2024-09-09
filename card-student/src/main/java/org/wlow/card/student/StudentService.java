@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,15 @@ import java.util.Calendar;
 
 @Service
 public class StudentService {
+    @Value("${file-service.server-url}")
+    private String serverUrl;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+    @Value("${file-service.virtual-path.image}")
+    private String imageVirtualPath;
+    @Value("${file-service.local-path.dir.image}")
+    private String imageLocalDir;
+
     @Resource
     private CardMapper cardMapper;
     @Resource
@@ -36,7 +46,7 @@ public class StudentService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public Response registerCard(String password) {
+    public Response<DTOCard> registerCard(String password) {
         // 已经经过PermissionInterceptor拦截器了, UserRole只能为Student或Admin
         int studentId = CurrentUser.getId();
         QueryWrapper<Card> query = new QueryWrapper<>();
@@ -63,13 +73,13 @@ public class StudentService {
         return Response.success("开通成功", DTOCard.fromPO(newCard));
     }
 
-    public Response getCardInfo() {
+    public Response<DTOCard> getCardInfo() {
         int studentId = CurrentUser.getId();
         Card card = ensureCardExists(studentId);
         return Response.success(DTOCard.fromPO(card));
     }
 
-    public Response recharge(BigDecimal amount) {
+    public Response<String> recharge(BigDecimal amount) {
         int studentId = CurrentUser.getId();
         ensureCardExists(studentId);
         UpdateWrapper<Card> update = new UpdateWrapper<>();
@@ -83,7 +93,7 @@ public class StudentService {
 
     // todo: 是否要设置为同步方法? synchronized?
     @Transactional(rollbackFor = Exception.class)
-    public Response purchase(Integer productId, Integer count, String password) {
+    public Response<DTOCard> purchase(Integer productId, Integer count, String password) {
         int studentId = CurrentUser.getId();
         Card card = ensureCardExists(studentId);
 
@@ -139,7 +149,7 @@ public class StudentService {
         return Response.success(DTOCard.fromPO(card));
     }
 
-    public Response getPurchaseRecord(Integer page, Integer pageSize) {
+    public Response<DTOPage<PurchaseRecord>> getPurchaseRecord(Integer page, Integer pageSize) {
         int studentId = CurrentUser.getId();
         // ensureCardExists(studentId);
         IPage<PurchaseRecord> recordPage = Page.of(page, pageSize);
@@ -154,16 +164,21 @@ public class StudentService {
         ));
     }
 
-    public Response getProductList(Integer page, Integer pageSize, Integer order, Boolean isAsc) {
+    public Response<DTOPage<Product>> getProductList(Integer page, Integer pageSize, Integer order, Boolean isAsc) {
         Page<Product> productPage = Page.of(page, pageSize);
         QueryWrapper<Product> query = new QueryWrapper<>();
+        // mapper中用ew.customSqlSegment时由于是连表查询, 编译器认为不符合SQL语法会报错
+        // 用改为用ew.sqlSegment, 前面有where, 在这里加一个1=1以免SQL运行报错
+        query.eq("1", 1);
         query.orderBy(true, isAsc, switch (order) {
             case 1 -> "upload_time";
             case 2 -> "price";
             case 3 -> "store";
             default -> "id";
         });
-        productMapper.selectPage(productPage, query);
+        productMapper.selectPageWithCoverUrl(productPage, query,
+                serverUrl + contextPath + imageVirtualPath + imageLocalDir + "/"
+        );
         return Response.success(new DTOPage<>(
                 productPage.getTotal(),
                 productPage.getPages(),

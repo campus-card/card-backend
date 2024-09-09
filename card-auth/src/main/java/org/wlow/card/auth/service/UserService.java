@@ -27,7 +27,7 @@ public class UserService {
     @Resource
     private JWTUtil jwtUtil;
 
-    public Response getUserInfo() {
+    public Response<DTOUser> getUserInfo() {
         // 先尝试从redis缓存中获取用户信息
         int userId = CurrentUser.getId();
         String userInfo = redisUtil.get("UserInfo:" + userId);
@@ -52,7 +52,7 @@ public class UserService {
         }
     }
 
-    public Response updateUserInfo(String username) {
+    public Response<String> updateUserInfo(String username) {
         int userId = CurrentUser.getId();
         UserRole role = CurrentUser.getRole();
         QueryWrapper<User> query = new QueryWrapper<>();

@@ -15,12 +15,12 @@ public class FileController {
     private FileService fileService;
 
     @PostMapping("/uploadFile")
-    public Response upload(@RequestParam MultipartFile file) {
+    public Response<String> upload(@RequestParam MultipartFile file) {
         return fileService.putFile(file);
     }
 
     @PostMapping("/uploadImage")
-    public Response uploadImage(@RequestParam MultipartFile image) {
+    public Response<String> uploadImage(@RequestParam MultipartFile image) {
         return fileService.putImage(image);
     }
 }

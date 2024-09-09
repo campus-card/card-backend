@@ -25,7 +25,7 @@ public class TestController {
     private RedisUtil redisUtil;
 
     @RequestMapping("/hello")
-    public Response hello(@RequestParam
+    public Response<Object> hello(@RequestParam
                               @Digits(integer = 10, fraction = 2, message = "金额只能有两位小数, 整数部分最多10位")
                               BigDecimal amount) {
 
@@ -33,7 +33,7 @@ public class TestController {
     }
 
     @PostMapping("/addBlog")
-    public Response addBlog(@RequestParam String content) {
+    public Response<Object> addBlog(@RequestParam String content) {
         Blog blog = Blog.builder()
                 .content(content)
                 .build();
@@ -43,7 +43,7 @@ public class TestController {
     }
 
     @GetMapping("/getBlog")
-    public Response getBlog(@RequestParam Integer id) {
+    public Response<Object> getBlog(@RequestParam Integer id) {
         Blog blog = blogMapper.getById(id);
         if (blog == null) {
             return Response.failure(400, "博客不存在");
@@ -52,7 +52,7 @@ public class TestController {
     }
 
     @GetMapping("/getBlogCached")
-    public Response getBlogCached(@RequestParam Integer id) {
+    public Response<Object> getBlogCached(@RequestParam Integer id) {
         String content = redisUtil.get("Test:Blog:" + id);
         if (content == null) {
             return Response.failure(400, "博客不存在");

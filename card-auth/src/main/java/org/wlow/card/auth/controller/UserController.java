@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.*;
 import org.wlow.card.auth.service.UserService;
+import org.wlow.card.data.data.DTO.DTOUser;
 import org.wlow.card.data.data.DTO.Response;
 
 @RestController
@@ -16,7 +17,7 @@ public class UserController {
      * 从redis缓存中获取
      */
     @GetMapping("/getUserInfo")
-    public Response getUserInfo() {
+    public Response<DTOUser> getUserInfo() {
         return userService.getUserInfo();
     }
 
@@ -24,7 +25,7 @@ public class UserController {
      * 更新用户个人信息, 目前能改用户名.
      */
     @PatchMapping("/updateUserInfo")
-    public Response updateUserInfo(@RequestParam
+    public Response<String> updateUserInfo(@RequestParam
                                        @Length(min = 4, message = "用户名长度不得小于4")
                                        @Length(max = 30, message = "用户名长度不得大于30")
                                        String username) {

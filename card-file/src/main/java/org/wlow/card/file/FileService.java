@@ -34,7 +34,7 @@ public class FileService {
     /**
      * 保存文件, 返回文件的虚拟路径
      */
-    public Response putFile(MultipartFile file) {
+    public Response<String> putFile(MultipartFile file) {
         FileEntry fileEntry = saveFile(file, fileLocalDir, fileVirtualPath);
         return Response.success(fileEntry.getWebUrl());
     }
@@ -42,7 +42,7 @@ public class FileService {
     /**
      * 保存图片, 返回图片的虚拟路径
      */
-    public Response putImage(MultipartFile image) {
+    public Response<String> putImage(MultipartFile image) {
         String contentType = image.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
             return Response.failure(400, "非图片文件");

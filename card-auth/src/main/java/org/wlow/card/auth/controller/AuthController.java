@@ -20,7 +20,7 @@ public class AuthController {
      * 注册
      */
     @PostMapping("/signUp")
-    public Response signUp(@RequestParam
+    public Response<String> signUp(@RequestParam
                                @Length(min = 4, message = "用户名长度不得小于4")
                                @Length(max = 30, message = "用户名长度不得大于30")
                                String username,
@@ -35,7 +35,7 @@ public class AuthController {
      * 登录, 需要传入role(1-学生, 2-商户, 3-管理员)
      */
     @PostMapping("/login")
-    public Response login(@RequestParam String username,
+    public Response<Object> login(@RequestParam String username,
                           @RequestParam String password,
                           @RequestParam UserRole role) {
         return authService.login(username, password, role);
@@ -45,7 +45,7 @@ public class AuthController {
      * 刷新token
      */
     @PostMapping("refresh")
-    public Response refresh(@RequestParam String refreshToken) {
+    public Response<Object> refresh(@RequestParam String refreshToken) {
         return authService.refresh(refreshToken);
     }
 }

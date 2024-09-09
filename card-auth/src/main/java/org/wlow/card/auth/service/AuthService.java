@@ -10,7 +10,6 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.wlow.card.auth.JWTUtil;
 import org.wlow.card.auth.TokenType;
 import org.wlow.card.data.data.DTO.DTOUser;
@@ -41,8 +40,7 @@ public class AuthService {
      * 注册 <br>
      * 每种role下的用户名唯一
      */
-    @Transactional
-    public Response signUp(String username, String password, UserRole role) {
+    public Response<String> signUp(String username, String password, UserRole role) {
         QueryWrapper<User> query = new QueryWrapper<>();
         query.eq("username", username);
         query.eq("role", role);
@@ -62,7 +60,7 @@ public class AuthService {
     /**
      * 登录
      */
-    public Response login(String username, String password, UserRole role) {
+    public Response<Object> login(String username, String password, UserRole role) {
         QueryWrapper<User> query = new QueryWrapper<>();
         query.eq("username", username);
         query.eq("role", role);
@@ -88,7 +86,7 @@ public class AuthService {
     /**
      * 刷新token
      */
-    public Response refresh(String refreshToken) {
+    public Response<Object> refresh(String refreshToken) {
         Claims payload;
         try {
             payload = jwtUtil.parseToken(refreshToken, TokenType.REFRESH);

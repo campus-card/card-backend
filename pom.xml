@@ -9,7 +9,7 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>org.wlow.card</groupId>
-  <artifactId>parent</artifactId>
+  <artifactId>card-parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>parent</name>
   <description>
