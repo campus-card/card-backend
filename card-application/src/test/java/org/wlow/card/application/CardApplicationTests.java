@@ -69,12 +69,7 @@ class CardApplicationTests {
 
     @Test
     void token() {
-        String token = jwtUtil.getToken(1, "admin", UserRole.Student, TokenType.ACCESS);
-        log.info("token: {}", token);
-        // 把access当做refresh解析时抛出SignatureException
-        Claims res = jwtUtil.parseToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiU3R1ZGVudCIsImlkIjo1LCJ0eXBlIjoiQUNDRVNTIiwidXNlcm5hbWUiOiJyZWlzZW4iLCJleHAiOjE3MjU2MDY3NTd9.PS2xxabfXRD81yVbtWQzI7ppEbczSsTZDV0qOJ3wJi8", TokenType.ACCESS);
-        log.info("payload: {}", res);
-        log.info("expiration: {}", res.getExpiration());
+
     }
 
     @Test

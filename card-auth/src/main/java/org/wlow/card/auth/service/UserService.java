@@ -64,6 +64,7 @@ public class UserService {
         User user = User.builder()
                 .id(userId)
                 .username(username)
+                .role(role)
                 .build();
         userMapper.updateById(user);
         // 同时更新redis缓存的用户信息
