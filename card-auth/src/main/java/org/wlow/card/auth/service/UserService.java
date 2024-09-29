@@ -61,11 +61,8 @@ public class UserService {
         if (userMapper.exists(query)) {
             return Response.failure(400, "用户名已被占用");
         }
-        User user = User.builder()
-                .id(userId)
-                .username(username)
-                .role(role)
-                .build();
+        User user = userMapper.selectById(userId);
+        user.setUsername(username);
         userMapper.updateById(user);
         // 同时更新redis缓存的用户信息
         try {
