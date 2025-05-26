@@ -15,6 +15,7 @@ public class JacksonConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
+        // 单独设置一下LocalDateTime日期对象的序列化和反序列化格式, 免得默认序列化为数组
         ObjectMapper mapper = new ObjectMapper();
         JavaTimeModule timeModule = new JavaTimeModule();
         timeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));

@@ -19,7 +19,7 @@ public class AppHandler {
      * 未查询到校园卡. 往往是因为学生未注册校园卡
      */
     @ExceptionHandler(CampusCardNotFoundException.class)
-    public Response handleCampusCardNotFoundException(CampusCardNotFoundException e) {
+    public Response<String> handleCampusCardNotFoundException(CampusCardNotFoundException e) {
         log.warn("校园卡不存在: {}", e.getMessage());
         return Response.failure(404, "校园卡不存在: " + e.getMessage());
     }
@@ -28,19 +28,19 @@ public class AppHandler {
      * 学生购买商品时出现异常
      */
     @ExceptionHandler(PurchaseException.class)
-    public Response handlePurchaseException(PurchaseException e) {
+    public Response<String> handlePurchaseException(PurchaseException e) {
         log.warn("商品购买异常: {}", e.getMessage());
         return Response.failure(400, "商品购买异常: " + e.getMessage());
     }
 
     @ExceptionHandler(FileUploadException.class)
-    public Response handleFileUploadException(FileUploadException e) {
+    public Response<String> handleFileUploadException(FileUploadException e) {
         log.warn("文件上传异常: {}", e.getMessage());
         return Response.failure(400, "文件上传异常: " + e.getMessage());
     }
 
     @ExceptionHandler(FileSystemException.class)
-    public Response handleFileSystemException(FileSystemException e) {
+    public Response<String> handleFileSystemException(FileSystemException e) {
         log.warn("文件系统异常: {}", e.getMessage());
         return Response.error("文件系统异常: " + e.getMessage());
     }

@@ -40,6 +40,10 @@
       <groupId>org.wlow.card</groupId>
       <artifactId>card-file</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.wlow.card</groupId>
+      <artifactId>card-common</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

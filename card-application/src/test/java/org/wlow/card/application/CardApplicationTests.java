@@ -8,24 +8,28 @@ import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.wlow.card.auth.TokenType;
 import org.wlow.card.auth.JWTUtil;
-import org.wlow.card.data.data.PO.Card;
-import org.wlow.card.data.data.PO.Product;
-import org.wlow.card.data.data.PO.PurchaseRecord;
-import org.wlow.card.data.data.PO.User;
+import org.wlow.card.data.data.DTO.DTOPage;
+import org.wlow.card.data.data.DTO.Response;
+import org.wlow.card.data.data.PO.*;
 import org.wlow.card.data.data.constant.CurrentUser;
 import org.wlow.card.data.data.constant.UserRole;
 import org.wlow.card.data.mapper.*;
 import org.wlow.card.data.redis.RedisUtil;
 import org.wlow.card.file.FileUtil;
+import org.wlow.card.shop.ShopService;
+import org.wlow.card.student.StudentService;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @SpringBootTest
@@ -55,16 +59,18 @@ class CardApplicationTests {
     private FileUtil fileUtil;
     @Resource
     private FileEntryMapper fileEntryMapper;
+    @Resource
+    private ShopService shopService;
+    @Resource
+    private StudentService studentService;
+    @Resource
+    private CategoryMapper categoryMapper;
+    @Resource
+    private ImagePostMapper imagePostMapper;
 
     @Test
     void test() throws IOException {
-        File file = new File("../resources/a.txt");
-        log.info("file: {}", file.getAbsolutePath());
-        // 解析路径中的相对路径
-        log.info("target: {}", Paths.get(file.getPath()));
 
-        log.info("file: {}", file.getCanonicalPath());
-        log.info("exists: {}", file.exists());
     }
 
     @Test
@@ -109,5 +115,11 @@ class CardApplicationTests {
     @Test
     void file() {
 
+    }
+
+    @Test
+    void shopTest() {
+        Response<DTOPage<Product>> productList = studentService.getProductList(1, 10, 1, true);
+        log.info("productList: {}", productList);
     }
 }

@@ -2,12 +2,20 @@ package org.wlow.card.file;
 
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.wlow.card.data.data.DTO.Response;
 import org.wlow.card.data.data.PO.FileEntry;
+import org.wlow.card.data.mapper.FileEntryMapper;
 import org.wlow.card.file.exception.FileUploadException;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.UUID;
 
 @Service
@@ -30,6 +38,9 @@ public class FileService {
     private String imageLocalDir;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+
+    @Resource
+    private FileEntryMapper fileEntryMapper;
 
     /**
      * 保存文件, 返回文件的虚拟路径
@@ -67,6 +78,28 @@ public class FileService {
             throw new FileUploadException("非图片文件");
         }
         return saveFile(image, imageLocalDir, imageVirtualPath);
+    }
+
+    /**
+     * 下载文件
+     * @param fileEntryId 文件对应的{@link FileEntry}的id
+     */
+    public ResponseEntity<InputStreamResource> downloadFile(Integer fileEntryId) throws FileNotFoundException {
+        FileEntry fileEntry = fileEntryMapper.selectById(fileEntryId);
+        if (fileEntry == null) {
+            return ResponseEntity.notFound().build();
+        }
+        String path = fileEntry.getDirectory() + "/" + fileEntry.getFilename() + fileEntry.getExtname();
+
+        File file = new File(path);
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        return ResponseEntity.ok()
+                // 在header中指定文件名
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(file.length())
+                .body(resource);
     }
 
     private FileEntry saveFile(MultipartFile file, String dirname, String virtualPath) {

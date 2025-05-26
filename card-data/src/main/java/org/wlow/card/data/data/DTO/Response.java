@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Response<TYPE> {
+public class Response<Type> {
     private int code;
     private String message;
-    private TYPE data;
+    private Type data;
 
     // 静态方法, 不能直接访问类泛型, 所以得是泛型方法才能自动推断类型
     public static <T> Response<T> ok() {

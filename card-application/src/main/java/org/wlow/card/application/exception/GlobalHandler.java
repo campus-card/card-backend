@@ -28,7 +28,7 @@ public class GlobalHandler {
      */
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public Response handleMissingServletRequestParameterException(MissingServletRequestParameterException e){
+    public Response<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException e){
         log.warn("缺少请求参数: {} {}", e.getParameterType(), e.getParameterName());
         return Response.failure(400, "缺少请求参数: " + e.getParameterType() + " " + e.getParameterName());
     }
@@ -37,7 +37,7 @@ public class GlobalHandler {
      * 处理非法参数异常
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public Response handleIllegalArgumentException(IllegalArgumentException e){
+    public Response<String> handleIllegalArgumentException(IllegalArgumentException e){
         log.warn("非法参数: {}", e.getMessage());
         return Response.failure(400, "非法参数: " + e.getMessage());
     }
@@ -48,7 +48,7 @@ public class GlobalHandler {
      * 如果是DTO类接收参数校验不通过, 抛出的是MethodArgumentNotValidException异常
      */
     @ExceptionHandler({MethodArgumentNotValidException.class, HandlerMethodValidationException.class})
-    public Response handleMethodArgumentNotValidException(Exception e){
+    public Response<String> handleMethodArgumentNotValidException(Exception e){
         String message;
         if (e instanceof MethodArgumentNotValidException e1) {
             message = Arrays.toString(e1.getDetailMessageArguments());
@@ -62,19 +62,19 @@ public class GlobalHandler {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public Response handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
+    public Response<String> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e){
         log.warn("不支持的请求方法: {}", e.getMethod());
         return Response.failure(405, "不支持的请求方法: " + e.getMethod());
     }
 
     @ExceptionHandler(MyBatisSystemException.class)
-    public Response handleMyBatisSystemException(MyBatisSystemException e){
+    public Response<String> handleMyBatisSystemException(MyBatisSystemException e){
         log.error("数据库异常: {}", e.getMessage());
         return Response.failure(500, "数据库异常: " + e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public Response handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+    public Response<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
         String parameterName = e.getName();
         String parameterType = e.getParameter().getParameterType().getName();
         log.warn("参数类型不匹配: 参数 {} 应当为 {} 类型", parameterName, parameterType);
@@ -82,7 +82,7 @@ public class GlobalHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public Response handleException(Exception e){
+    public Response<String> handleException(Exception e){
         log.error("服务端异常: {} >> {}", e.getClass(), e.getMessage());
         return Response.error("服务端异常: " + e.getMessage());
     }

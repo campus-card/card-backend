@@ -3,6 +3,7 @@ package org.wlow.card.application.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.wlow.card.application.config.converter.StringValueToEnumConverterFactory;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
