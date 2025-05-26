@@ -11,7 +11,10 @@ import java.util.List;
 
 @Mapper
 public interface ImagePostMapper extends BaseMapper<ImagePost> {
-    @Insert( "INSERT INTO image_post_category (image_post_id, category_id) VALUES (#{imagePostId}, #{categoryId})")
+    /**
+     * 插入图片动态和类别的多对多关系
+     */
+    @Insert("INSERT INTO image_post_category (image_post_id, category_id) VALUES (#{imagePostId}, #{categoryId})")
     int insertImagePostCategory(Integer imagePostId, Integer categoryId);
 
     @Select("SELECT category_id FROM image_post_category WHERE image_post_id = #{imagePostId}")

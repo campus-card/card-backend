@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -152,5 +154,63 @@ public class ImagePostService {
         }
         FileEntry imageEntry = fileEntryMapper.selectById(imagePost.getImageId());
         return fileService.downloadFile(imageEntry.getId());
+    }
+
+    public Response<ImagePost> modifyImagePost(Integer id, String title, String description, List<Integer> categoryIds, MultipartFile image) {
+        ImagePost target = imagePostMapper.selectById(id);
+        if (target == null) {
+            return Response.error("不存在的图片动态");
+        }
+        if (!CurrentUser.getId().equals(target.getUserId())) {
+            return Response.error("不能修改其他用户的图片动态");
+        }
+
+        // 如果有图片则修改图片
+        if (image != null) {
+            // 如果已经有旧的图片则先删除
+            FileEntry oldImage = fileEntryMapper.selectById(target.getImageId());
+            if (oldImage != null) {
+                if (!fileService.deleteFile(oldImage)) {
+                    throw new FileSystemException("删除本地旧图片文件失败");
+                }
+            }
+            // 保存新的图片
+            FileEntry newImage = fileService.putImageEntry(image);
+            target.setImageId(newImage.getId());
+            target.setImageUrl(newImage.getWebUrl());
+        } else {
+            // 如果没有修改图片, 则保留原有的图片信息
+            FileEntry existingImage = fileEntryMapper.selectById(target.getImageId());
+            if (existingImage != null) {
+                String imageUrl = serverUrl + contextPath +
+                    imageVirtualPath + imageLocalDir + "/" + existingImage.getFilename() +
+                    existingImage.getExtname();
+                target.setImageUrl(imageUrl);
+            }
+        }
+
+        // 更新图片动态信息
+        if (title != null) target.setTitle(title);
+        if (description != null) target.setDescription(description);
+        target.setModifyTime(LocalDateTime.now());
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            // 删除旧的类别关系
+            imagePostMapper.deleteImagePostCategoryByImagePostId(id);
+            // 保存新的类别关系
+            categoryIds.forEach(categoryId -> imagePostMapper.insertImagePostCategory(id, categoryId));
+            // 查询并设置新的类别信息
+            target.setCategories(categoryMapper.selectBatchIds(categoryIds));
+        } else {
+            // 没有修改类别时, 查询并设置当前的类别信息
+            List<Integer> currentCategoryIds = imagePostMapper.getCategoryByImagePostId(id);
+            target.setCategories(categoryMapper.selectBatchIds(currentCategoryIds));
+        }
+        int res = imagePostMapper.updateById(target);
+        if (res == 1) {
+            // 返回修改后的图片动态信息
+            return Response.success(target);
+        } else {
+            return Response.error("修改图片动态失败");
+        }
     }
 }

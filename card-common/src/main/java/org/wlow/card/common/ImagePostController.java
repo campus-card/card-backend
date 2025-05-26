@@ -1,5 +1,6 @@
 package org.wlow.card.common;
 
+import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.wlow.card.data.data.DTO.DTOPage;
 import org.wlow.card.data.data.DTO.Response;
 import org.wlow.card.data.data.PO.ImagePost;
-import org.wlow.card.file.FileService;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -22,8 +22,6 @@ public class ImagePostController {
 
     @Resource
     private ImagePostService imagePostService;
-    @Resource
-    private FileService fileService;
 
     /**
      * 上传图片动态
@@ -77,8 +75,22 @@ public class ImagePostController {
     }
 
     /**
+     * 修改图片动态信息
+     */
+    @PostMapping("/modifyImagePost")
+    public Response<ImagePost> modifyImagePost(@RequestParam @Positive Integer id,
+                                               @RequestParam(required = false) @NotBlank String title,
+                                               @RequestParam(required = false) @NotBlank String description,
+                                               @RequestParam(required = false) List<Integer> categoryIds,
+                                               @RequestParam(required = false) MultipartFile image) {
+        return imagePostService.modifyImagePost(id, title, description, categoryIds, image);
+
+    }
+
+
+    /**
      * 下载图片
-     * @param imagePostId 图片对应的 {@link ImagePost#imageId} 的id
+     * @param imagePostId 图片对应的 {@link ImagePost#imageId}
      */
     @GetMapping("/download/{imagePostId}")
     public ResponseEntity<InputStreamResource> downloadImage(@PathVariable Integer imagePostId) throws FileNotFoundException {
