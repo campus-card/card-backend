@@ -44,8 +44,8 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: auto
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 # 文件上传
 file-service:

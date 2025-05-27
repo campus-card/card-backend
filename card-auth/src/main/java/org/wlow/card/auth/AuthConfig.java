@@ -25,7 +25,13 @@ public class AuthConfig implements WebMvcConfigurer {
                         "/**/test/**",
                         // 放行图片请求, 以便前端能够正常显示图片, 其他文件的请求暂时不放行
                         "/**/img/image/**",
-                        "/**/error"
+                        "/**/error",
+                        // 放行swagger相关请求
+                        "/**/swagger-ui/**",
+                        "/**/v3/api-docs/**",
+                        "/**/webjars/**",
+                        "/**/swagger-resources/**",
+                        "/**/swagger-ui.html"
                 ));
         registry.addInterceptor(permissionInterceptor)
                 .addPathPatterns("/**");

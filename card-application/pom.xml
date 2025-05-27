@@ -42,7 +42,7 @@
     </dependency>
     <dependency>
       <groupId>org.wlow.card</groupId>
-      <artifactId>card-common</artifactId>
+      <artifactId>card-image</artifactId>
     </dependency>
 
     <dependency>

@@ -9,9 +9,9 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>card-common</artifactId>
+  <artifactId>card-image</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>card-common</name>
+  <name>card-image</name>
   <description>
     校园卡系统-公共模块
   </description>

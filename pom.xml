@@ -22,7 +22,7 @@
     <module>card-auth</module>
     <module>card-data</module>
     <module>card-shop</module>
-    <module>card-common</module>
+    <module>card-image</module>
     <module>card-student</module>
     <module>card-file</module>
   </modules>
@@ -42,7 +42,7 @@
     <card-shop.version>0.0.1-SNAPSHOT</card-shop.version>
     <card-student.version>0.0.1-SNAPSHOT</card-student.version>
     <card-file.version>0.0.1-SNAPSHOT</card-file.version>
-    <card-common.version>0.0.1-SNAPSHOT</card-common.version>
+    <card-image.version>0.0.1-SNAPSHOT</card-image.version>
   </properties>
 
   <dependencies>
@@ -52,6 +52,13 @@
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!-- swagger ui -->
+    <dependency>
+       <groupId>org.springdoc</groupId>
+       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+       <version>2.6.0</version>
+    </dependency>
+
   </dependencies>
 
   <!-- 限定子工程依赖版本 -->
@@ -90,8 +97,8 @@
       </dependency>
       <dependency>
           <groupId>org.wlow.card</groupId>
-          <artifactId>card-common</artifactId>
-          <version>${card-common.version}</version>
+          <artifactId>card-image</artifactId>
+          <version>${card-image.version}</version>
       </dependency>
       <!-- ======本项目模块<<<< -->
 
