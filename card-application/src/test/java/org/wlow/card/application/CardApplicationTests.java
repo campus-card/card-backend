@@ -75,7 +75,12 @@ class CardApplicationTests {
 
     @Test
     void token() {
-
+        QueryWrapper<ImagePost> query = new QueryWrapper<>();
+        query.like("title", "测试");
+        query.orderByDesc("upload_time");
+        IPage<ImagePost> page = Page.of(1, 10);
+        imagePostMapper.selectPage(page, query);
+        log.info("list: {}", page.getRecords());
     }
 
     @Test

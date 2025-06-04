@@ -1,6 +1,5 @@
 package org.wlow.card.common;
 
-import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.wlow.card.data.data.DTO.DTOPage;
 import org.wlow.card.data.data.DTO.Response;
+import org.wlow.card.data.data.PO.Category;
 import org.wlow.card.data.data.PO.ImagePost;
 
 import java.io.FileNotFoundException;
@@ -55,15 +55,16 @@ public class ImagePostController {
      * 根据类别搜索图片动态
      */
     @GetMapping("/search")
-    public Response<DTOPage<ImagePost>> searchByCategory(@RequestParam @NotEmpty List<Integer> categoryIds,
+    public Response<DTOPage<ImagePost>> search(@RequestParam List<Integer> categoryIds,
                                                          @RequestParam(defaultValue = "1") Integer page,
                                                          @RequestParam(defaultValue = "10") Integer pageSize,
                                                          @RequestParam(defaultValue = "1")
                                                          @Positive(message = "排序字段必须为正数")
                                                          Integer order,
-                                                         @RequestParam(defaultValue = "false")
-                                                      Boolean isAsc) {
-        return imagePostService.searchImagePostsByCategory(categoryIds, page, pageSize, order, isAsc);
+                                                         @RequestParam(defaultValue = "false") Boolean isAsc,
+                                                         @RequestParam(required = false) String title
+    ) {
+        return imagePostService.searchImagePostsByCategory(categoryIds, title, page, pageSize, order, isAsc);
     }
 
     /**
@@ -90,10 +91,15 @@ public class ImagePostController {
 
     /**
      * 下载图片
-     * @param imagePostId 图片对应的 {@link ImagePost#imageId}
+     * @param imagePostId 图片对应的 {@link ImagePost#id}
      */
     @GetMapping("/download/{imagePostId}")
     public ResponseEntity<InputStreamResource> downloadImage(@PathVariable Integer imagePostId) throws FileNotFoundException {
         return imagePostService.downloadImage(imagePostId);
+    }
+
+    @GetMapping("/getAllCategories")
+    public Response<List<Category>> getAllCategories() {
+        return imagePostService.getAllCategories();
     }
 }

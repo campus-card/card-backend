@@ -8,6 +8,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.wlow.card.data.data.DTO.DTOPage;
 import org.wlow.card.data.data.DTO.Response;
+import org.wlow.card.data.data.PO.Category;
 import org.wlow.card.data.data.PO.FileEntry;
 import org.wlow.card.data.data.PO.ImagePost;
 import org.wlow.card.data.data.constant.CurrentUser;
@@ -29,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 public class ImagePostService {
 
@@ -95,19 +98,29 @@ public class ImagePostService {
         return Response.success(imagePost);
     }
 
-    public Response<DTOPage<ImagePost>> searchImagePostsByCategory(List<Integer> categoryIds, Integer page, Integer pageSize, Integer order, Boolean isAsc) {
+    public Response<DTOPage<ImagePost>> searchImagePostsByCategory(List<Integer> categoryIds, String title, Integer page, Integer pageSize, Integer order, Boolean isAsc) {
         IPage<ImagePost> imagePostPage = Page.of(page, pageSize);
         QueryWrapper<ImagePost> query = new QueryWrapper<>();
-        query.eq("1", 1);
+        if (title != null && !title.isBlank()) {
+            query.like("title", title);
+        } else {
+            query.eq("1", 1);
+        }
         query.orderBy(true, isAsc, switch (order) {
             case 1 -> "upload_time";
             case 2 -> "browse";
             case 3 -> "likes";
             default -> "upload_time"; // 默认按上传时间排序
         });
-        String categoryIdsStr = String.join(",", categoryIds.stream().map(String::valueOf).toList());
-        imagePostMapper.getImagePostsByCategoryIds(imagePostPage, query, categoryIdsStr,
-                serverUrl + contextPath + imageVirtualPath + imageLocalDir + "/");
+
+        if (!categoryIds.isEmpty()) {
+            String categoryIdsStr = String.join(",", categoryIds.stream().map(String::valueOf).toList());
+            imagePostMapper.getImagePostsByCategoryIds(imagePostPage, query, categoryIdsStr,
+                    serverUrl + contextPath + imageVirtualPath + imageLocalDir + "/");
+        } else {
+            // 如果没有指定类别, 则查询任意类别的图片动态
+            imagePostMapper.getImagePosts(imagePostPage, query, serverUrl + contextPath + imageVirtualPath + imageLocalDir + "/");
+        }
 
         // 补上类别信息
         imagePostPage.getRecords().forEach(imagePost -> {
@@ -132,7 +145,7 @@ public class ImagePostService {
         // 删除图片和分类的多对多关系
         imagePostMapper.deleteImagePostCategoryByImagePostId(id);
         // 删除图片文件
-        FileEntry image = fileEntryMapper.selectById(id);
+        FileEntry image = fileEntryMapper.selectById(imagePost.getImageId());
         if (image != null) {
             if (!fileService.deleteFile(image)) {
                 throw new FileSystemException("删除本地图片文件失败");
@@ -212,5 +225,9 @@ public class ImagePostService {
         } else {
             return Response.error("修改图片动态失败");
         }
+    }
+
+    public Response<List<Category>> getAllCategories() {
+        return Response.success(categoryMapper.selectList(null));
     }
 }

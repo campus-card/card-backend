@@ -20,7 +20,11 @@ public interface ImagePostMapper extends BaseMapper<ImagePost> {
     @Select("SELECT category_id FROM image_post_category WHERE image_post_id = #{imagePostId}")
     List<Integer> getCategoryByImagePostId(Integer imagePostId);
 
-    @Select("select ip.*, concat(#{webUrlPrefix}, fe.filename, fe.extname) image_url from image_post ip " +
+    /**
+     * 根据类别以及标题搜索图片动态
+     */
+    @Select("select ip.*, concat(#{webUrlPrefix}, fe.filename, fe.extname) image_url " +
+            "from image_post ip " +
             "join (select distinct image_post_id " +
             "from image_post_category " +
             "where category_id in (#{categoryIds})) temp " +
@@ -28,6 +32,15 @@ public interface ImagePostMapper extends BaseMapper<ImagePost> {
             "join file_entry fe on ip.image_id = fe.id " +
             "where ${ew.sqlSegment}")
     IPage<ImagePost> getImagePostsByCategoryIds(IPage<ImagePost> page, @Param(Constants.WRAPPER) Wrapper<ImagePost> wrapper, String categoryIds, String webUrlPrefix);
+
+    /**
+     * 直接分页搜索图片动态
+     */
+    @Select("SELECT ip.*, concat(#{webUrlPrefix}, fe.filename, fe.extname) image_url " +
+            "FROM image_post ip " +
+            "JOIN file_entry fe ON ip.image_id = fe.id " +
+            "WHERE ${ew.sqlSegment}")
+    IPage<ImagePost> getImagePosts(IPage<ImagePost> page, @Param(Constants.WRAPPER) Wrapper<ImagePost> wrapper, String webUrlPrefix);
 
     @Delete("DELETE FROM image_post_category WHERE image_post_id = #{imagePostId}")
     int deleteImagePostCategoryByImagePostId(Integer imagePostId);
